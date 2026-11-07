@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Superfolio hero mock</title>
+<meta name="description" content="Design direction mock for the Superfolio website hero. Sample data only.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── Draft tokens (final set ships as design/tokens.css after sign-off) ─── */
+:root {
+  color-scheme: light;
+  /* surfaces: same values as the app */
+  --bg: #FFFFFF;            /* page */
+  --bg-subtle: #F7F7F7;     /* product tray = app --bg */
+  --card: #FFFFFF;
+  --border: #E8E8E8;
+  --border-strong: #D9D7D3;
+  /* ink */
+  --text: #18160F;          /* app --text */
+  --text-2: #4F4A43;        /* secondary copy, 8.4:1 */
+  --muted: #6B6560;         /* labels, 5.7:1 (app's #A09890 is 2.8:1, too light for text) */
+  /* status: semantic only, never decoration */
+  --pos: #047857; --pos-fill: #10B981; --pos-bg: #ECFDF5;
+  --info: #2563EB; --info-bg: #EFF6FF;
+  --neg: #B91C1C;
+  /* data colours: the app's asset types */
+  --type-cash: #2563EB; --type-funds: #059669; --type-stocks: #EA580C; --type-other: #7C3AED;
+  /* action */
+  --action: #18160F; --on-action: #FFFFFF;
+  --focus: #2563EB;
+  /* type */
+  --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-num: 'DM Sans', 'Plus Jakarta Sans', system-ui, sans-serif;
+  /* shape */
+  --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 32px; --r-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(24,22,15,.04), 0 8px 24px rgba(24,22,15,.06);
+  --shadow-float: 0 2px 4px rgba(24,22,15,.04), 0 24px 48px -8px rgba(24,22,15,.14);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0D1117; --bg-subtle: #11161D; --card: #161B22; --border: #30363D; --border-strong: #3D444D;
+    --text: #E6EDF3; --text-2: #B6BFC9; --muted: #8B949E;
+    --pos: #34D399; --pos-fill: #10B981; --pos-bg: rgba(16,185,129,.12);
+    --info: #60A5FA; --info-bg: rgba(96,165,250,.12); --neg: #F87171;
+    --type-cash: #60A5FA; --type-funds: #34D399; --type-stocks: #FB923C; --type-other: #A78BFA;
+    --action: #E6EDF3; --on-action: #0D1117; --focus: #60A5FA;
+    --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    --shadow-float: 0 2px 4px rgba(0,0,0,.3), 0 24px 48px -8px rgba(0,0,0,.55);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0D1117; --bg-subtle: #11161D; --card: #161B22; --border: #30363D; --border-strong: #3D444D;
+  --text: #E6EDF3; --text-2: #B6BFC9; --muted: #8B949E;
+  --pos: #34D399; --pos-fill: #10B981; --pos-bg: rgba(16,185,129,.12);
+  --info: #60A5FA; --info-bg: rgba(96,165,250,.12); --neg: #F87171;
+  --type-cash: #60A5FA; --type-funds: #34D399; --type-stocks: #FB923C; --type-other: #A78BFA;
+  --action: #E6EDF3; --on-action: #0D1117; --focus: #60A5FA;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  --shadow-float: 0 2px 4px rgba(0,0,0,.3), 0 24px 48px -8px rgba(0,0,0,.55);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-ui); font-size: 16px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+.skip { position: absolute; left: 16px; top: -48px; background: var(--action); color: var(--on-action); padding: 8px 14px; border-radius: var(--r-pill); z-index: 10; text-decoration: none; font-weight: 600; }
+.skip:focus { top: 12px; }
+
+.wrap { width: 100%; max-width: 1168px; margin: 0 auto; padding: 0 24px; }
+
+/* ─── Nav ─── */
+.nav { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid transparent; }
+.nav .wrap { display: flex; align-items: center; gap: 32px; height: 68px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--text); }
+.brand svg { width: 26px; height: 26px; flex: none; }
+.brand span { font-weight: 700; font-size: 19px; letter-spacing: -0.045em; }
+.nav-links { display: flex; gap: 28px; margin: 0; padding: 0; list-style: none; font-size: 15px; font-weight: 500; color: var(--text-2); }
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--text); }
+.nav-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.signin { font-size: 15px; font-weight: 500; color: var(--text-2); text-decoration: none; padding: 8px 12px; }
+.signin:hover { color: var(--text); }
+.theme-btn { width: 40px; height: 40px; border-radius: var(--r-pill); border: 1px solid var(--border); background: transparent; color: var(--text-2); display: grid; place-items: center; cursor: pointer; }
+.theme-btn:hover { color: var(--text); border-color: var(--border-strong); }
+.theme-btn svg { width: 18px; height: 18px; }
+
+/* ─── Buttons ─── */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: var(--r-pill); font: 600 15px/1 var(--font-ui); letter-spacing: -0.01em; text-decoration: none; cursor: pointer; border: 1px solid transparent; transition: transform .16s var(--ease-out), background-color .16s, border-color .16s, box-shadow .16s; white-space: nowrap; }
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--action); color: var(--on-action); box-shadow: 0 1px 2px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.08); }
+.btn-primary:hover { box-shadow: 0 6px 18px -6px rgba(24,22,15,.45); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border-strong); }
+.btn-ghost:hover { border-color: var(--text-2); }
+.btn-lg { min-height: 52px; padding: 0 26px; font-size: 16px; }
+.btn svg { width: 16px; height: 16px; }
+
+/* ─── Hero ─── */
+.hero { padding: 72px 0 0; text-align: center; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 10px; border: 1px solid var(--border); border-radius: var(--r-pill); font-size: 13.5px; font-weight: 500; color: var(--text-2); background: var(--card); }
+.eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--info); box-shadow: 0 0 0 3px var(--info-bg); }
+h1 { margin: 24px auto 0; max-width: 20ch; font-weight: 600; font-size: clamp(2.5rem, 1.3rem + 3.6vw, 4rem); line-height: 1.06; letter-spacing: -0.035em; text-wrap: balance; }
+h1 .line { display: block; }
+h1 .quiet { color: var(--muted); }
+.lede { margin: 24px auto 0; max-width: 34em; font-size: clamp(1.0625rem, 1rem + .3vw, 1.25rem); line-height: 1.55; color: var(--text-2); text-wrap: pretty; }
+.ctas { margin-top: 36px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.reassure { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
+
+/* ─── Product composition ─── */
+.stage { position: relative; margin: 64px auto 0; max-width: 1120px; border-radius: var(--r-xl); background:
+  radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--card) 70%, transparent) 0%, transparent 60%), var(--bg-subtle);
+  border: 1px solid var(--border); padding: 56px 56px 64px; text-align: left; overflow: hidden; }
+.sample-tag { position: absolute; top: 18px; right: 20px; font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+.sample-tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--muted); opacity: .6; }
+.stage-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 28px; align-items: start; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-card); }
+.label { font-size: 11.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+
+/* Net worth card */
+.nw { padding: 32px 32px 12px; }
+.nw-top { display: flex; gap: 28px; align-items: center; justify-content: space-between; }
+.nw-amount { margin-top: 6px; font-family: var(--font-num); font-weight: 600; font-size: clamp(2.6rem, 2rem + 2.2vw, 3.9rem); line-height: 1; letter-spacing: -0.035em; font-variant-numeric: tabular-nums; }
+.nw-amount .cur { font-size: .58em; letter-spacing: -0.02em; color: var(--text-2); vertical-align: .36em; margin-right: 2px; }
+.delta { margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+.delta b { color: var(--pos); font-weight: 600; font-family: var(--font-num); }
+.split { margin-top: 14px; display: flex; gap: 18px; font-size: 13.5px; color: var(--muted); flex-wrap: wrap; }
+.split b { color: var(--text); font-weight: 600; font-family: var(--font-num); }
+.donut-wrap { display: flex; align-items: center; gap: 20px; flex: none; }
+.donut { width: 132px; height: 132px; flex: none; }
+.donut circle { fill: none; stroke-width: 14; }
+.legend { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; font-size: 13px; }
+.legend li { display: grid; grid-template-columns: 10px auto; column-gap: 8px; align-items: center; }
+.legend i { width: 8px; height: 8px; border-radius: 50%; }
+.legend span { color: var(--text-2); font-weight: 500; }
+.legend em { font-style: normal; }
+.legend small { grid-column: 2; font-family: var(--font-num); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.rows { margin: 28px -32px 0; padding: 0; list-style: none; border-top: 1px solid var(--border); }
+.row { display: grid; grid-template-columns: 30px minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 14px 32px; border-bottom: 1px solid var(--border); }
+.row:last-child { border-bottom: 0; }
+.ico { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; }
+.ico svg { width: 16px; height: 16px; }
+.row-name { font-weight: 600; font-size: 14.5px; letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-meta { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+.row-val { text-align: right; font-family: var(--font-num); font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
+.row-val small { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
+.row-val.neg { color: var(--text); }
+
+/* Goal card */
+.goal-col { position: relative; padding-top: 56px; }
+.goal { padding: 24px; box-shadow: var(--shadow-float); }
+.goal-head { display: flex; gap: 16px; align-items: center; }
+.ring { width: 60px; height: 60px; flex: none; position: relative; }
+.ring svg { width: 60px; height: 60px; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 5; }
+.ring .track { stroke: var(--border); }
+.ring .fill { stroke: var(--info); stroke-linecap: round; transition: stroke-dashoffset .8s var(--ease-out); }
+.ring.done .fill { stroke: var(--pos-fill); }
+.ring .pct { position: absolute; inset: 0; display: grid; place-items: center; font: 700 13px/1 var(--font-num); font-variant-numeric: tabular-nums; }
+.chip { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: var(--r-pill); background: var(--info-bg); color: var(--info); }
+.goal-name { margin: 6px 0 0; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+.goal-amt { margin-top: 2px; font-size: 14px; color: var(--muted); }
+.goal-amt b { font-family: var(--font-num); color: var(--text); font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+.bar { margin-top: 20px; height: 6px; border-radius: var(--r-pill); background: var(--border); overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: inherit; background: var(--info); transform-origin: left; transition: width .8s var(--ease-out); }
+.goal-facts { margin-top: 18px; display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+.goal-facts .r { text-align: right; }
+.date { margin-top: 4px; height: 28px; overflow: hidden; position: relative; }
+.date span { display: block; font: 700 21px/28px var(--font-num); letter-spacing: -0.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.date .out { position: absolute; inset: 0 auto auto 0; }
+.when { font-size: 12.5px; color: var(--muted); }
+.rate { margin-top: 4px; font: 700 16px/28px var(--font-num); font-variant-numeric: tabular-nums; }
+.quick { margin-top: 18px; display: flex; gap: 8px; align-items: center; }
+.qbtn { min-width: 52px; height: 40px; padding: 0 12px; border-radius: var(--r-md); border: 1px solid var(--border-strong); background: var(--card); color: var(--text); font: 700 14px/1 var(--font-num); cursor: pointer; transition: transform .14s var(--ease-out), background-color .14s, border-color .14s; }
+.qbtn:hover { border-color: var(--text-2); }
+.qbtn:active, .qbtn.is-pressed { transform: scale(.94); background: var(--bg-subtle); border-color: var(--text-2); }
+.qmore { margin-left: 4px; font-size: 13px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border-strong); }
+.note { margin-top: 16px; min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-radius: var(--r-md); background: var(--pos-bg); color: var(--pos); font-size: 13.5px; font-weight: 600; opacity: 0; transform: translateY(6px); transition: opacity .35s var(--ease-out), transform .35s var(--ease-out); }
+.note.show { opacity: 1; transform: none; }
+.note button { background: none; border: 0; padding: 6px 2px; font: inherit; font-weight: 600; color: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.goal-caption { margin: 18px 4px 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
+.goal-caption b { color: var(--text); font-weight: 600; }
+
+/* Facts strip: plain facts instead of logos or user counts */
+.facts { margin: 40px auto 96px; max-width: 1120px; text-align: left; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 0; list-style: none; }
+.facts li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; font-size: 14px; color: var(--text-2); line-height: 1.4; }
+.facts svg { width: 18px; height: 18px; flex: none; margin-top: 1px; color: var(--text); }
+.facts b { display: block; color: var(--text); font-weight: 600; }
+
+/* ─── Responsive ─── */
+@media (max-width: 1040px) {
+  .stage { padding: 40px 32px 48px; }
+  .stage-grid { grid-template-columns: 1fr; }
+  .goal-col { padding-top: 0; margin-top: -8px; max-width: 420px; justify-self: end; width: 100%; }
+  .facts { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 760px) {
+  .nav-links, .signin { display: none; }
+  .nav .wrap { height: 60px; gap: 12px; }
+  .wrap { padding: 0 16px; }
+  .btn-nav { min-height: 40px; padding: 0 16px; font-size: 14px; }
+  .hero { padding-top: 40px; }
+  h1 { margin-top: 20px; letter-spacing: -0.03em; }
+  .lede { margin-top: 18px; }
+  .ctas { margin-top: 28px; flex-direction: column; align-items: stretch; }
+  .stage { margin-top: 44px; border-radius: 24px; padding: 40px 12px 16px; }
+  .sample-tag { top: 14px; right: 16px; }
+  .nw { padding: 22px 20px 4px; }
+  .nw-top { flex-direction: column; align-items: flex-start; gap: 22px; }
+  .donut-wrap { width: 100%; gap: 16px; }
+  .donut { width: 88px; height: 88px; }
+  .legend { flex: 1; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+  .legend small { font-size: 12px; }
+  .legend .amt { display: none; }
+  .rows { margin: 20px -20px 0; }
+  .row { padding: 13px 20px; grid-template-columns: 28px minmax(0,1fr) auto; gap: 10px; }
+  .goal-col { margin-top: -4px; max-width: none; }
+  .goal { padding: 20px; }
+  .facts { grid-template-columns: 1fr 1fr; margin: 28px auto 64px; gap: 4px; }
+  .facts li { padding: 8px 4px; }
+}
+@media (max-width: 380px) { .facts { grid-template-columns: 1fr; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Superfolio home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="currentColor"/><circle cx="16" cy="16" r="7.5" fill="none" stroke="var(--bg)" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="36.4 47.1" transform="rotate(-90 16 16)"/></svg>
+      <span>superfolio</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav-links">
+        <li><a href="#">How it works</a></li>
+        <li><a href="#">Goals</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="nav-end">
+      <a class="signin" href="https://superfoliomoney.vercel.app">Sign in</a>
+      <button class="theme-btn" type="button" id="themeBtn" aria-label="Switch to dark mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+      <a class="btn btn-primary btn-nav" href="https://superfoliomoney.vercel.app">Open the app</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Free while in beta. No bank login needed.</p>
+      <h1 id="hero-title"><span class="line">All your money, in one place.</span> <span class="line quiet">And a real date for every goal.</span></h1>
+      <p class="lede">Add what you own and owe in a few minutes. Superfolio adds it up in any currency and shows when you’ll reach the things you’re saving for. No spreadsheet, no finance jargon.</p>
+      <div class="ctas">
+        <a class="btn btn-primary btn-lg" href="https://superfoliomoney.vercel.app">Get started free
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
+      </div>
+      <p class="reassure">No ads. We never sell your data.</p>
+    </div>
+
+    <div class="wrap">
+      <div class="stage" role="group" aria-label="Superfolio app preview with sample figures">
+        <span class="sample-tag">Sample figures</span>
+        <div class="stage-grid">
+
+          <!-- Net worth -->
+          <article class="card nw" aria-label="Net worth">
+            <div class="nw-top">
+              <div>
+                <div class="label">Total net worth · NZD</div>
+                <div class="nw-amount"><span class="cur">NZ$</span>83,020</div>
+                <div class="delta">
+                  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.5 10 8H2z" fill="var(--pos)"/></svg>
+                  <b>NZ$1,840</b> since 1 October
+                </div>
+                <div class="split"><span>Assets <b>NZ$91,420</b></span><span>Liabilities <b>NZ$8,400</b></span></div>
+              </div>
+              <div class="donut-wrap">
+                <svg class="donut" viewBox="0 0 120 120" role="img" aria-label="Assets by type: Unit trusts 52%, Cash 25%, Vehicle 16%, Stocks 7%">
+                  <g transform="rotate(-90 60 60)">
+                    <circle cx="60" cy="60" r="46" stroke="var(--border)"/>
+                    <!-- circumference 289.03; segments with 2.5 gaps -->
+                    <circle cx="60" cy="60" r="46" stroke="var(--type-funds)"  stroke-dasharray="148.8 289" stroke-dashoffset="0"/>
+                    <circle cx="60" cy="60" r="46" stroke="var(--type-cash)"   stroke-dasharray="69.3 289" stroke-dashoffset="-151.3"/>
+                    <circle cx="60" cy="60" r="46" stroke="var(--type-other)"  stroke-dasharray="42.6 289" stroke-dashoffset="-223.1"/>
+                    <circle cx="60" cy="60" r="46" stroke="var(--type-stocks)" stroke-dasharray="18.2 289" stroke-dashoffset="-268.2"/>
+                  </g>
+                </svg>
+                <ul class="legend" aria-hidden="true">
+                  <li><i style="background:var(--type-funds)"></i><span>Unit trusts</span><small><em class="amt">NZ$47.9K · </em>52%</small></li>
+                  <li><i style="background:var(--type-cash)"></i><span>Cash</span><small><em class="amt">NZ$22.7K · </em>25%</small></li>
+                  <li><i style="background:var(--type-other)"></i><span>Vehicle</span><small><em class="amt">NZ$14.3K · </em>16%</small></li>
+                  <li><i style="background:var(--type-stocks)"></i><span>Stocks</span><small><em class="amt">NZ$6.5K · </em>7%</small></li>
+                </ul>
+              </div>
+            </div>
+
+            <ul class="rows">
+              <li class="row">
+                <span class="ico" style="background:color-mix(in srgb, var(--type-funds) 14%, transparent);color:var(--type-funds)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12l4-4 3 3 5-6"/><path d="M10 5h4v4"/></svg></span>
+                <div><div class="row-name">KiwiSaver Growth</div><div class="row-meta">Unit trusts</div></div>
+                <div class="row-val">NZ$38,650</div>
+              </li>
+              <li class="row">
+                <span class="ico" style="background:color-mix(in srgb, var(--type-cash) 14%, transparent);color:var(--type-cash)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c1.8 1.7 2.6 3.7 2.6 6S9.8 12.3 8 14M8 2C6.2 3.7 5.4 5.7 5.4 8s.8 4.3 2.6 6"/></svg></span>
+                <div><div class="row-name">Savings in Colombo</div><div class="row-meta">Cash · live rate</div></div>
+                <div class="row-val">LKR 1,000,000<small>≈ NZ$5,500</small></div>
+              </li>
+              <li class="row">
+                <span class="ico" style="background:color-mix(in srgb, var(--type-other) 14%, transparent);color:var(--type-other)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 10.5V8.2l1.6-3.4a1.5 1.5 0 0 1 1.4-.8h5a1.5 1.5 0 0 1 1.4.8l1.6 3.4v2.3a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1Z"/><path d="M2.5 8.5h11"/><circle cx="5" cy="11.5" r="1"/><circle cx="11" cy="11.5" r="1"/></svg></span>
+                <div><div class="row-name">2019 hatchback</div><div class="row-meta">Revalues from age and kms</div></div>
+                <div class="row-val">NZ$14,300</div>
+              </li>
+              <li class="row">
+                <span class="ico" style="background:color-mix(in srgb, var(--muted) 14%, transparent);color:var(--text-2)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3.5" width="12" height="9" rx="1.5"/><path d="M2 6.5h12M4.5 10h2"/></svg></span>
+                <div><div class="row-name">Car loan</div><div class="row-meta">Paid off Sept 2028</div></div>
+                <div class="row-val neg">−NZ$8,400</div>
+              </li>
+            </ul>
+          </article>
+
+          <!-- Goal -->
+          <div class="goal-col">
+            <article class="card goal" id="goal" aria-label="Goal: Trip to Sri Lanka">
+              <div class="goal-head">
+                <div class="ring" id="ring">
+                  <svg viewBox="0 0 60 60" aria-hidden="true"><circle class="track" cx="30" cy="30" r="25"/><circle class="fill" id="ringFill" cx="30" cy="30" r="25" stroke-dasharray="157.08" stroke-dashoffset="157.08"/></svg>
+                  <span class="pct" id="pct">65%</span>
+                </div>
+                <div>
+                  <span class="chip">In progress</span>
+                  <h2 class="goal-name">Trip to Sri Lanka</h2>
+                  <div class="goal-amt"><b class="num" id="saved">NZ$3,920</b> of NZ$6,000</div>
+                </div>
+              </div>
+              <div class="bar" aria-hidden="true"><i id="bar" style="width:65%"></i></div>
+              <div class="goal-facts">
+                <div>
+                  <div class="label">Goal date</div>
+                  <div class="date" id="date" aria-hidden="true"><span id="dateNow">22 May 2027</span></div>
+                  <div class="when" id="when">in 6 months</div>
+                </div>
+                <div class="r">
+                  <div class="label">Saving</div>
+                  <div class="rate">NZ$320/mo</div>
+                  <div class="when">Auto-adds monthly</div>
+                </div>
+              </div>
+              <div class="quick" role="group" aria-label="Add to this goal">
+                <button class="qbtn" type="button" data-add="10">+10</button>
+                <button class="qbtn" type="button" data-add="20">+20</button>
+                <button class="qbtn" type="button" data-add="50" id="add50">+50</button>
+                <a class="qmore" href="#">Other amount</a>
+              </div>
+              <div class="note" id="note" role="status" aria-live="polite"><span id="noteText"></span><button type="button" id="undo" hidden>Undo</button></div>
+            </article>
+            <p class="goal-caption"><b>Try it.</b> Every contribution moves the date. This card works like the one in the app.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <ul class="facts">
+        <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M2.5 10h15M10 2.5c2.2 2.1 3.2 4.6 3.2 7.5s-1 5.4-3.2 7.5M10 2.5C7.8 4.6 6.8 7.1 6.8 10s1 5.4 3.2 7.5"/></svg><span><b>Any currency</b>Shown in NZ$, original kept</span></li>
+        <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="12" height="8.5" rx="2"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9"/></svg><span><b>No bank login</b>You type the numbers in</span></li>
+        <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7.5" r="2.8"/><circle cx="13.5" cy="8.5" r="2.3"/><path d="M2 16.5c.6-2.6 2.6-4 5-4s4.4 1.4 5 4M12.5 12.6c2.2-.3 4.5.9 5.2 3.9"/></svg><span><b>Share with a partner</b>One board, two logins</span></li>
+        <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5a7 7 0 0 1 12.9-3.8M17 8.5a7 7 0 0 1-12.9 3.8"/><path d="M16.5 3.5v4.2h-4.2M3.5 16.5v-4.2h4.2"/></svg><span><b>Syncs, works offline</b>Install it on any device</span></li>
+        <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5 4 5v4.6c0 3.7 2.5 6.6 6 7.9 3.5-1.3 6-4.2 6-7.9V5l-6-2.5Z"/><path d="m7.5 10 1.8 1.8 3.4-3.6"/></svg><span><b>No ads, ever</b>We don’t sell your data</span></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  /* Theme toggle: follows the system until someone chooses. */
+  const root = document.documentElement, btn = document.getElementById('themeBtn');
+  const sysDark = matchMedia('(prefers-color-scheme: dark)');
+  const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : sysDark.matches;
+  const label = () => btn.setAttribute('aria-label', isDark() ? 'Switch to light mode' : 'Switch to dark mode');
+  try { const saved = localStorage.getItem('sf-theme'); if (saved) root.dataset.theme = saved; } catch {}
+  const q = new URLSearchParams(location.search).get('theme'); if (q) root.dataset.theme = q;
+  label();
+  btn.addEventListener('click', () => { root.dataset.theme = isDark() ? 'light' : 'dark'; try { localStorage.setItem('sf-theme', root.dataset.theme); } catch {} label(); });
+
+  /* Goal card: the same maths as the app. Finish date = today + remaining ÷ monthly rate. */
+  const TARGET = 6000, MONTHLY = 320, C = 157.08;
+  let saved = 3920, last = null;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || new URLSearchParams(location.search).get('motion') === 'off';
+  const $ = id => document.getElementById(id);
+  const money = v => 'NZ$' + Math.round(v).toLocaleString('en-NZ');
+  const dayMs = 864e5, today = new Date(); today.setHours(0,0,0,0);
+  const finish = s => new Date(today.getTime() + Math.max(0, TARGET - s) / MONTHLY * 30.4375 * dayMs);
+  const fmt = d => d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' });
+  const inWords = d => { const m = Math.round((d - today) / (30.4375 * dayMs)); return m <= 0 ? 'this month' : m === 1 ? 'in 1 month' : m < 12 ? `in ${m} months` : `in ${Math.floor(m/12)}y ${m%12}m`; };
+
+  function paint(prev, animate) {
+    const pct = Math.min(1, saved / TARGET);
+    $('ringFill').style.strokeDashoffset = C * (1 - pct);
+    $('bar').style.width = (pct * 100).toFixed(1) + '%';
+    $('pct').textContent = Math.round(pct * 100) + '%';
+    $('ring').classList.toggle('done', pct >= 1);
+    const d = finish(saved);
+    $('when').textContent = pct >= 1 ? 'Reached' : inWords(d);
+    const box = $('date'), next = pct >= 1 ? 'Done' : fmt(d), cur = box.querySelector('span:not(.out)');
+    if (cur.textContent !== next) {
+      if (animate && !reduce && cur.animate) {
+        const n = document.createElement('span'); n.textContent = next; box.appendChild(n);
+        cur.classList.add('out');
+        cur.animate([{ transform: 'translateY(0)', opacity: 1, filter: 'blur(0)' }, { transform: 'translateY(-100%)', opacity: 0, filter: 'blur(2px)' }], { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' }).onfinish = () => cur.remove();
+        n.animate([{ transform: 'translateY(100%)', opacity: 0, filter: 'blur(2px)' }, { transform: 'translateY(0)', opacity: 1, filter: 'blur(0)' }], { duration: 520, easing: 'cubic-bezier(.22,1,.36,1)' });
+      } else { box.innerHTML = ''; const n = document.createElement('span'); n.textContent = next; box.appendChild(n); }
+    }
+    countTo($('saved'), prev ?? saved, saved, animate && !reduce);
+  }
+  function countTo(el, from, to, animate) {
+    if (!animate) { el.textContent = money(to); return; }
+    const t0 = performance.now(), dur = 520;
+    const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = money(from + (to - from) * e); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  function add(amount, animate = true) {
+    const before = saved, dBefore = finish(saved);
+    saved = Math.min(TARGET, saved + amount); last = { before };
+    paint(before, animate);
+    const days = Math.round((dBefore - finish(saved)) / dayMs);
+    $('noteText').textContent = saved >= TARGET ? `+${money(amount)} · Goal reached` : `+${money(amount)} · ${days <= 0 ? 'Less than a day' : days === 1 ? '1 day' : days + ' days'} sooner`;
+    $('undo').hidden = false; $('note').classList.add('show');
+  }
+  document.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => add(+b.dataset.add)));
+  $('undo').addEventListener('click', () => { if (!last) return; const prev = saved; saved = last.before; last = null; paint(prev, true); $('noteText').textContent = 'Contribution undone'; $('undo').hidden = true; });
+  document.querySelector('.qmore').addEventListener('click', e => e.preventDefault());
+
+  /* First paint: ring fills in, then one demonstration contribution once the card is in view. */
+  $('dateNow').textContent = fmt(finish(saved)); $('when').textContent = inWords(finish(saved));
+  if (reduce) { paint(null, false); return; }
+  requestAnimationFrame(() => requestAnimationFrame(() => paint(null, false)));
+  let played = false;
+  new IntersectionObserver((entries, io) => {
+    if (played || !entries.some(e => e.isIntersecting)) return;
+    played = true; io.disconnect();
+    setTimeout(() => { const b = $('add50'); b.classList.add('is-pressed'); setTimeout(() => { b.classList.remove('is-pressed'); add(50); }, 160); }, 1500);
+  }, { threshold: 0.6 }).observe($('goal'));
+})();
+</script>
+</body>
+</html>

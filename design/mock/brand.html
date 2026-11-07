@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Superfolio brand sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { color-scheme: light; --bg:#FFFFFF; --bg-subtle:#F7F7F7; --card:#FFFFFF; --border:#E8E8E8; --text:#18160F; --text-2:#4F4A43; --muted:#6B6560;
+  --pos:#047857; --pos-fill:#10B981; --info:#2563EB; --info-bg:#EFF6FF; --neg:#B91C1C;
+  --type-cash:#2563EB; --type-funds:#059669; --type-stocks:#EA580C; --type-other:#7C3AED;
+  --font-ui:'Plus Jakarta Sans',system-ui,sans-serif; --font-num:'DM Sans','Plus Jakarta Sans',system-ui,sans-serif; }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#0D1117; --bg-subtle:#11161D; --card:#161B22; --border:#30363D; --text:#E6EDF3; --text-2:#B6BFC9; --muted:#8B949E;
+  --pos:#34D399; --info:#60A5FA; --info-bg:rgba(96,165,250,.12); --neg:#F87171;
+  --type-cash:#60A5FA; --type-funds:#34D399; --type-stocks:#FB923C; --type-other:#A78BFA; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg:#0D1117; --bg-subtle:#11161D; --card:#161B22; --border:#30363D; --text:#E6EDF3; --text-2:#B6BFC9; --muted:#8B949E;
+  --pos:#34D399; --info:#60A5FA; --info-bg:rgba(96,165,250,.12); --neg:#F87171; --type-cash:#60A5FA; --type-funds:#34D399; --type-stocks:#FB923C; --type-other:#A78BFA; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 var(--font-ui); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 56px 24px 80px; }
+h1 { font-size: 40px; font-weight: 600; letter-spacing: -0.035em; margin: 0; line-height: 1.1; }
+.intro { color: var(--text-2); margin: 10px 0 0; max-width: 40em; }
+h2 { font-size: 13px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 56px 0 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.tile { border: 1px solid var(--border); border-radius: 20px; background: var(--bg-subtle); padding: 28px; }
+.tile h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+.tile p { margin: 0; color: var(--text-2); font-size: 14px; }
+.tile .rec { display: inline-block; margin-left: 6px; font-size: 11.5px; font-weight: 600; color: var(--info); background: var(--info-bg); padding: 2px 8px; border-radius: 999px; vertical-align: 2px; }
+.lockup { height: 120px; display: flex; align-items: center; gap: 12px; color: var(--text); }
+.lockup svg.mark { width: 44px; height: 44px; flex: none; }
+.lockup span { font-weight: 700; font-size: 32px; letter-spacing: -0.045em; }
+.sizes { display: flex; align-items: end; gap: 16px; margin: 8px 0 18px; color: var(--text); }
+.app-icon { width: 56px; height: 56px; border-radius: 13px; background: #18160F; display: grid; place-items: center; }
+.app-icon svg { width: 40px; height: 40px; }
+.type-row { display: grid; grid-template-columns: 180px 1fr; gap: 24px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--border); }
+.type-row:last-child { border-bottom: 0; }
+.spec { font-size: 13px; color: var(--muted); font-family: var(--font-num); }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.sw { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--card); }
+.sw i { display: block; height: 64px; }
+.sw div { padding: 10px 12px; font-size: 13px; }
+.sw b { display: block; font-weight: 600; }
+.sw small { color: var(--muted); font-family: var(--font-num); }
+@media (max-width: 760px) { .grid3 { grid-template-columns: 1fr; } .type-row { grid-template-columns: 1fr; gap: 4px; } .wrap { padding: 40px 16px 64px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Brand sheet, draft</h1>
+  <p class="intro">Three logo directions, the type scale and the palette for sign-off. Nothing here is final until you pick; the chosen logo then gets drawn properly as outlined SVG paths.</p>
+
+  <h2>Logo options</h2>
+  <div class="grid3">
+    <div class="tile">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="currentColor"/><circle cx="16" cy="16" r="7.5" fill="none" stroke="var(--bg-subtle)" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="36.4 47.1" transform="rotate(-90 16 16)"/></svg>
+        <span>superfolio</span>
+      </div>
+      <div class="sizes">
+        <div class="app-icon"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="7.5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="36.4 47.1" transform="rotate(-90 16 16)"/></svg></div>
+        <svg width="32" height="32" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="currentColor"/><circle cx="16" cy="16" r="7.5" fill="none" stroke="var(--bg-subtle)" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="36.4 47.1" transform="rotate(-90 16 16)"/></svg>
+        <svg width="16" height="16" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="currentColor"/><circle cx="16" cy="16" r="7.5" fill="none" stroke="var(--bg-subtle)" stroke-width="4" stroke-linecap="round" stroke-dasharray="36.4 47.1" transform="rotate(-90 16 16)"/></svg>
+      </div>
+      <h3>A. Ring <span class="rec">Recommended</span></h3>
+      <p>An open progress ring: the donut on Home and the goal rings in one shape. Says “how far along”, not “pension”. Holds up at 16px.</p>
+    </div>
+    <div class="tile">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="currentColor"/><rect x="8" y="11" width="13" height="13" rx="3.5" fill="none" stroke="var(--bg-subtle)" stroke-width="2.6"/><path d="M12 8h8.5A3.5 3.5 0 0 1 24 11.5V20" fill="none" stroke="var(--bg-subtle)" stroke-width="2.6" stroke-linecap="round"/></svg>
+        <span>superfolio</span>
+      </div>
+      <div class="sizes">
+        <div class="app-icon"><svg viewBox="0 0 32 32"><rect x="8" y="11" width="13" height="13" rx="3.5" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M12 8h8.5A3.5 3.5 0 0 1 24 11.5V20" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+        <svg width="32" height="32" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="currentColor"/><rect x="8" y="11" width="13" height="13" rx="3.5" fill="none" stroke="var(--bg-subtle)" stroke-width="2.6"/><path d="M12 8h8.5A3.5 3.5 0 0 1 24 11.5V20" fill="none" stroke="var(--bg-subtle)" stroke-width="2.6" stroke-linecap="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="currentColor"/><rect x="8" y="11" width="13" height="13" rx="3.5" fill="none" stroke="var(--bg-subtle)" stroke-width="3.2"/><path d="M12 8h8.5A3.5 3.5 0 0 1 24 11.5V20" fill="none" stroke="var(--bg-subtle)" stroke-width="3.2" stroke-linecap="round"/></svg>
+      </div>
+      <h3>B. Folio</h3>
+      <p>Two stacked sheets: many accounts, one folio. Literal to the name, but closer to “documents” and muddier at 16px.</p>
+    </div>
+    <div class="tile">
+      <div class="lockup">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 19a6.5 6.5 0 0 1 13 0" fill="none" stroke="var(--bg-subtle)" stroke-width="2.8" stroke-linecap="round"/><path d="M7 23.5h18" stroke="var(--bg-subtle)" stroke-width="2.8" stroke-linecap="round"/></svg>
+        <span>superfolio</span>
+      </div>
+      <div class="sizes">
+        <div class="app-icon"><svg viewBox="0 0 32 32"><path d="M9.5 19a6.5 6.5 0 0 1 13 0" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><path d="M7 23.5h18" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/></svg></div>
+        <svg width="32" height="32" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 19a6.5 6.5 0 0 1 13 0" fill="none" stroke="var(--bg-subtle)" stroke-width="2.8" stroke-linecap="round"/><path d="M7 23.5h18" stroke="var(--bg-subtle)" stroke-width="2.8" stroke-linecap="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9.5 19a6.5 6.5 0 0 1 13 0" fill="none" stroke="var(--bg-subtle)" stroke-width="3.4" stroke-linecap="round"/><path d="M7 23.5h18" stroke="var(--bg-subtle)" stroke-width="3.4" stroke-linecap="round"/></svg>
+      </div>
+      <h3>C. Horizon</h3>
+      <p>A sun on the horizon: calm, and “something you’re heading towards”. Warmest of the three, but common as a mark.</p>
+    </div>
+  </div>
+
+  <h2>Type</h2>
+  <div class="tile" style="background:var(--card)">
+    <div class="type-row"><div class="spec">Display · Jakarta 600<br>64 / 1.06 / −3.5%</div><div style="font-size:clamp(2.5rem,1.3rem + 3.6vw,4rem);font-weight:600;letter-spacing:-0.035em;line-height:1.06">All your money, in one place.</div></div>
+    <div class="type-row"><div class="spec">H2 · Jakarta 600<br>44 / 1.1 / −3%</div><div style="font-size:clamp(2rem,1.4rem + 2vw,2.75rem);font-weight:600;letter-spacing:-0.03em;line-height:1.1">Goals with real dates</div></div>
+    <div class="type-row"><div class="spec">H3 · Jakarta 600<br>22 / 1.3 / −1.5%</div><div style="font-size:22px;font-weight:600;letter-spacing:-0.015em;line-height:1.3">Every contribution moves the date</div></div>
+    <div class="type-row"><div class="spec">Lead · Jakarta 400<br>20 / 1.55</div><div style="font-size:20px;color:var(--text-2)">Add what you own and owe in a few minutes. Superfolio adds it up in any currency.</div></div>
+    <div class="type-row"><div class="spec">Body · Jakarta 400<br>16 / 1.55</div><div style="color:var(--text-2)">Values you enter yourself get a gentle reminder once a month. One sheet, two minutes, done.</div></div>
+    <div class="type-row"><div class="spec">Figures · DM Sans 600<br>tabular, −3.5% at display</div><div style="font-family:var(--font-num);font-weight:600;font-size:48px;letter-spacing:-0.035em;font-variant-numeric:tabular-nums;line-height:1">NZ$83,020 <span style="font-size:22px;letter-spacing:-0.02em;color:var(--muted)">22 May 2027</span></div></div>
+  </div>
+
+  <h2>Colour: ink and paper, with colour reserved for data</h2>
+  <div class="swatches">
+    <div class="sw"><i style="background:#18160F"></i><div><b>Ink</b><small>#18160F · text, primary button</small></div></div>
+    <div class="sw"><i style="background:#4F4A43"></i><div><b>Ink 2</b><small>#4F4A43 · 8.4:1</small></div></div>
+    <div class="sw"><i style="background:#6B6560"></i><div><b>Muted</b><small>#6B6560 · 5.7:1</small></div></div>
+    <div class="sw"><i style="background:#E8E8E8"></i><div><b>Border</b><small>#E8E8E8</small></div></div>
+    <div class="sw"><i style="background:#F7F7F7"></i><div><b>Paper</b><small>#F7F7F7 · trays</small></div></div>
+    <div class="sw"><i style="background:#0D1117"></i><div><b>Night</b><small>#0D1117 · dark bg</small></div></div>
+  </div>
+  <div class="swatches" style="margin-top:12px">
+    <div class="sw"><i style="background:var(--pos-fill)"></i><div><b>Complete</b><small>text #047857</small></div></div>
+    <div class="sw"><i style="background:var(--info)"></i><div><b>In progress</b><small>#2563EB</small></div></div>
+    <div class="sw"><i style="background:#A8A29E"></i><div><b>Not started</b><small>grey</small></div></div>
+    <div class="sw"><i style="background:var(--type-funds)"></i><div><b>Unit trusts</b><small>data only</small></div></div>
+    <div class="sw"><i style="background:var(--type-stocks)"></i><div><b>Stocks</b><small>data only</small></div></div>
+    <div class="sw"><i style="background:var(--type-other)"></i><div><b>Other</b><small>data only</small></div></div>
+  </div>
+</div>
+</body>
+</html>

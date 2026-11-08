@@ -1,0 +1,140 @@
+---
+// Interactive goal card: the same maths as the app (finish date = today + remaining ÷ monthly rate).
+import { goals, money, fmtDate } from '../lib/sample';
+const g = goals[1] as { name: string; saved: number; target: number; monthly: number };
+const MONTH = 30.4375 * 864e5;
+const finish = new Date(Date.now() + (g.target - g.saved) / g.monthly * MONTH);
+const p = g.saved / g.target;
+---
+<article class="card goal" data-goal-card data-target={g.target} data-saved={g.saved} data-monthly={g.monthly} aria-label={`Goal: ${g.name}`}>
+  <div class="head">
+    <div class="ring" data-ring>
+      <svg viewBox="0 0 60 60" aria-hidden="true"><circle class="track" cx="30" cy="30" r="25" /><circle class="fill" data-ring-fill cx="30" cy="30" r="25" stroke-dasharray="157.08" stroke-dashoffset={(157.08 * (1 - p)).toFixed(2)} /></svg>
+      <span class="pct" data-pct>{Math.round(p * 100)}%</span>
+    </div>
+    <div>
+      <span class="chip progress">In progress</span>
+      <h3 class="name">{g.name}</h3>
+      <div class="amt"><b class="num" data-saved-text>{money(g.saved)}</b> of {money(g.target)}</div>
+    </div>
+  </div>
+  <div class="bar" aria-hidden="true"><i data-bar style={`width:${(p * 100).toFixed(1)}%`}></i></div>
+  <div class="facts">
+    <div>
+      <div class="label">Goal date</div>
+      <div class="date" data-date-box aria-hidden="true"><span>{fmtDate(finish)}</span></div>
+      <div class="when" data-when-text>in 6 months</div>
+    </div>
+    <div class="r">
+      <div class="label">Saving</div>
+      <div class="rate">{money(g.monthly)}/mo</div>
+      <div class="when">Auto-adds monthly</div>
+    </div>
+  </div>
+  <div class="quick" role="group" aria-label="Add to this goal">
+    <button class="q" type="button" data-add="10">+10</button>
+    <button class="q" type="button" data-add="20">+20</button>
+    <button class="q" type="button" data-add="50" data-demo>+50</button>
+  </div>
+  <div class="note" data-note role="status" aria-live="polite"><span data-note-text></span><button type="button" data-undo hidden>Undo</button></div>
+</article>
+
+<script>
+  const MONTH = 30.4375 * 864e5, DAY = 864e5, C = 157.08;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || new URLSearchParams(location.search).get('motion') === 'off';
+  const money = (v: number) => 'NZ$' + Math.round(v).toLocaleString('en-NZ');
+  const fmt = (d: Date) => d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' });
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const inWords = (d: Date) => { const m = Math.round((+d - +today) / MONTH); return m <= 0 ? 'this month' : m === 1 ? 'in 1 month' : m < 12 ? `in ${m} months` : `in ${Math.floor(m / 12)}y ${m % 12}m`; };
+
+  document.querySelectorAll<HTMLElement>('[data-goal-card]').forEach(card => {
+    const TARGET = +card.dataset.target!, MONTHLY = +card.dataset.monthly!;
+    let saved = +card.dataset.saved!, undoTo: number | null = null;
+    const $ = <T extends HTMLElement>(s: string) => card.querySelector<T>(s)!;
+    const finish = (s: number) => new Date(+today + Math.max(0, TARGET - s) / MONTHLY * MONTH);
+
+    function countTo(el: HTMLElement, from: number, to: number, animate: boolean) {
+      if (!animate) { el.textContent = money(to); return; }
+      const t0 = performance.now();
+      const step = (t: number) => { const k = Math.min(1, (t - t0) / 520); el.textContent = money(from + (to - from) * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    }
+    function paint(prev: number, animate: boolean) {
+      const p = Math.min(1, saved / TARGET);
+      $('[data-ring-fill]').style.strokeDashoffset = String(C * (1 - p));
+      $('[data-bar]').style.width = (p * 100).toFixed(1) + '%';
+      $('[data-pct]').textContent = Math.round(p * 100) + '%';
+      $('[data-ring]').classList.toggle('done', p >= 1);
+      const d = finish(saved), next = p >= 1 ? 'Done' : fmt(d);
+      $('[data-when-text]').textContent = p >= 1 ? 'Reached' : inWords(d);
+      const box = $('[data-date-box]'), cur = box.querySelector<HTMLElement>('span:not(.out)')!;
+      if (cur.textContent !== next) {
+        const n = document.createElement('span'); n.textContent = next;
+        if (animate && !reduce && cur.animate) {
+          box.appendChild(n); cur.classList.add('out');
+          cur.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-100%)', opacity: 0, filter: 'blur(2px)' }], { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' }).onfinish = () => cur.remove();
+          n.animate([{ transform: 'translateY(100%)', opacity: 0, filter: 'blur(2px)' }, { transform: 'translateY(0)', opacity: 1 }], { duration: 520, easing: 'cubic-bezier(.22,1,.36,1)' });
+        } else { box.replaceChildren(n); }
+      }
+      countTo($('[data-saved-text]'), prev, saved, animate && !reduce);
+    }
+    function add(amount: number) {
+      const before = saved, dBefore = finish(saved);
+      saved = Math.min(TARGET, saved + amount); undoTo = before;
+      paint(before, true);
+      const days = Math.round((+dBefore - +finish(saved)) / DAY);
+      $('[data-note-text]').textContent = saved >= TARGET ? `+${money(amount)} · Goal reached` : `+${money(amount)} · ${days <= 0 ? 'Less than a day' : days === 1 ? '1 day' : days + ' days'} sooner`;
+      $('[data-undo]').hidden = false; $('[data-note]').classList.add('show');
+    }
+    card.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(b => b.addEventListener('click', () => add(+b.dataset.add!)));
+    $('[data-undo]').addEventListener('click', () => { if (undoTo === null) return; const prev = saved; saved = undoTo; undoTo = null; paint(prev, true); $('[data-note-text]').textContent = 'Contribution undone'; $('[data-undo]').hidden = true; });
+
+    // Today's date may differ from build day, so repaint first. Then, once in view, one demonstration contribution.
+    $('[data-date-box]').replaceChildren(Object.assign(document.createElement('span'), { textContent: fmt(finish(saved)) }));
+    paint(saved, false);
+    if (reduce) return;
+    const fill = $('[data-ring-fill]'), bar = $('[data-bar]');
+    const p0 = saved / TARGET;
+    fill.style.transition = 'none'; fill.style.strokeDashoffset = String(C); bar.style.transition = 'none'; bar.style.width = '0%';
+    let played = false;
+    new IntersectionObserver((entries, io) => {
+      if (played || !entries.some(e => e.isIntersecting)) return;
+      played = true; io.disconnect();
+      fill.style.transition = ''; bar.style.transition = '';
+      requestAnimationFrame(() => { fill.style.strokeDashoffset = String(C * (1 - p0)); bar.style.width = (p0 * 100).toFixed(1) + '%'; });
+      setTimeout(() => { const b = $('[data-demo]'); b.classList.add('is-pressed'); setTimeout(() => { b.classList.remove('is-pressed'); add(50); }, 160); }, 1500);
+    }, { threshold: 0.6 }).observe(card);
+  });
+</script>
+
+<style>
+  .goal { padding: 24px; box-shadow: var(--shadow-float); }
+  .head { display: flex; gap: 16px; align-items: center; }
+  .ring { width: 60px; height: 60px; flex: none; position: relative; }
+  .ring svg { width: 60px; height: 60px; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 5; }
+  .track { stroke: var(--border); }
+  .fill { stroke: var(--info-fill); stroke-linecap: round; transition: stroke-dashoffset .8s var(--ease-out); }
+  .ring:global(.done) .fill { stroke: var(--pos-fill); }
+  .pct { position: absolute; inset: 0; display: grid; place-items: center; font: 700 13px/1 var(--font-num); font-variant-numeric: tabular-nums; }
+  .name { margin-top: 6px; font-size: 17px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; }
+  .amt { margin-top: 2px; font-size: 14px; color: var(--muted); }
+  .amt b { color: var(--text); font-weight: 700; font-size: 15px; }
+  .bar { margin-top: 20px; height: 6px; border-radius: var(--r-pill); background: var(--border); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: inherit; background: var(--info-fill); transition: width .8s var(--ease-out); }
+  .facts { margin-top: 18px; display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+  .r { text-align: right; }
+  .date { margin-top: 4px; height: 28px; overflow: hidden; position: relative; }
+  .date :global(span) { display: block; font: 700 21px/28px var(--font-num); letter-spacing: -0.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .date :global(.out) { position: absolute; inset: 0 auto auto 0; }
+  .when { font-size: 12.5px; color: var(--muted); }
+  .rate { margin-top: 4px; font: 700 16px/28px var(--font-num); font-variant-numeric: tabular-nums; }
+  .quick { margin-top: 18px; display: flex; gap: 8px; }
+  .q { min-width: 56px; height: 44px; padding: 0 12px; border-radius: var(--r-md); border: 1px solid var(--border-strong); background: var(--card); color: var(--text); font: 700 14px/1 var(--font-num); cursor: pointer; transition: transform .14s var(--ease-out), background-color .14s, border-color .14s; }
+  .q:hover { border-color: var(--text-2); }
+  .q:active, .q:global(.is-pressed) { transform: scale(.94); background: var(--bg); border-color: var(--text-2); }
+  .note { margin-top: 16px; min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-radius: var(--r-md); background: var(--pos-bg); color: var(--pos); font-size: 13.5px; font-weight: 600; opacity: 0; transform: translateY(6px); transition: opacity .35s var(--ease-out), transform .35s var(--ease-out); }
+  .note:global(.show) { opacity: 1; transform: none; }
+  .note button { background: none; border: 0; padding: 8px 2px; font: inherit; font-weight: 600; color: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  @media (max-width: 760px) { .goal { padding: 20px; } }
+</style>

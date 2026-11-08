@@ -1,0 +1,43 @@
+---
+import { currencies } from '../lib/sample';
+const faqs = [
+  { q: 'Is Superfolio a KiwiSaver or super fund?', a: ['No. Superfolio is an app for keeping track of your own money. You can add your KiwiSaver or super balance to it, but we don’t hold, manage or invest money for anyone.'] },
+  { q: 'Do I need to link my bank?', a: ['No. Superfolio doesn’t connect to banks. You enter your balances yourself, which takes a few minutes, and the monthly check-in reminds you to update the ones that change.'] },
+  { q: 'Is my data safe?', a: ['Your data syncs to your account over an encrypted connection, and you can download a full backup any time. Because Superfolio never asks for bank logins, there are none to leak.', 'We don’t have formal security certifications yet, and we won’t claim ones we don’t have.'] },
+  { q: 'Which currencies does it support?', a: [`Twenty: ${currencies.join(', ')}. Amounts in other currencies are converted to your home currency with live exchange rates, and the original amount is always shown beside it. Rates are a guide, not a quote.`] },
+  { q: 'Can my partner and I use it together?', a: ['Yes. Share a board and you each sign in with your own account. You both see and update the same numbers.'] },
+  { q: 'Is this financial advice?', a: ['No. Superfolio shows your own numbers and the maths behind them, like goal dates, loan payoffs and projections. It doesn’t recommend products or tell you what to invest in. For advice about your situation, talk to a licensed financial adviser.'] },
+  { q: 'Does it work on my phone?', a: ['Yes, in any modern browser. Add it to your home screen and it works like an app, offline too, then syncs when you’re back online.'] },
+  { q: 'What does it cost?', a: ['Nothing while it’s in beta. If a paid plan comes later, you’ll hear about it first.'] },
+];
+---
+<section class="section" id="faq" aria-labelledby="faq-title">
+  <div class="wrap faq">
+    <div class="section-head">
+      <p class="label">FAQ</p>
+      <h2 id="faq-title">Questions, <span class="quiet">answered plainly.</span></h2>
+    </div>
+    <div class="list">
+      {faqs.map((f, i) => (
+        <details open={i === 0}>
+          <summary><span>{f.q}</span><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9h10M9 4v10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" /></svg></summary>
+          <div class="a">{f.a.map(p => <p>{p}</p>)}</div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: var(--space-8); align-items: start; }
+  .list { border-top: 1px solid var(--border); }
+  details { border-bottom: 1px solid var(--border); }
+  summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; cursor: pointer; font-size: 17px; font-weight: 600; letter-spacing: -0.015em; min-height: 44px; }
+  summary::-webkit-details-marker { display: none; }
+  summary svg { flex: none; color: var(--muted); transition: transform var(--dur-base) var(--ease-out); }
+  details[open] summary svg { transform: rotate(45deg); }
+  summary:hover svg { color: var(--text); }
+  .a { padding: 0 0 22px; display: grid; gap: 10px; max-width: 40rem; }
+  .a p { color: var(--text-2); }
+  @media (max-width: 860px) { .faq { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); } summary { font-size: 16px; } }
+</style>

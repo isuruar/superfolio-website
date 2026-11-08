@@ -1,6 +1,21 @@
-# Superfolio website: design direction (draft for sign-off)
+# Superfolio website: design direction
 
-**Status:** draft, 7 Nov 2026. Nothing beyond the hero gets built until this is signed off.
+**Status:** signed off by Isuru, 7 Nov 2026. The site is now built from this in `src/`.
+
+**Decisions**
+
+| Decision | Outcome |
+|---|---|
+| Overall look | Approved as proposed |
+| Headline | Approved: "All your money, in one place. And a real date for every goal." |
+| Logo | **B. Folio** (final files in `design/logo/`) |
+| Fonts | Keep the app's: Plus Jakarta Sans for words, DM Sans for figures |
+| Stack | Astro, static, on its own Vercel project |
+| Pricing | "Free while in beta" |
+| Analytics | None |
+| Domain | Still open |
+
+**Correction found while building:** the app supports **20 currencies**, not "any currency". The site says 20 and lists them.
 **See it:** `design/mock/index.html` (hero, interactive) and `design/mock/brand.html` (logos, type, colour).
 Screenshots are in `design/screens/`. All figures are made up.
 

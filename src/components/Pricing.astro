@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+const APP = 'https://superfoliomoney.vercel.app';
+const included = ['Net worth across 20 currencies', 'Goals with real dates', 'Spending plan and projection', 'Monthly check-ins', 'Sync across devices, works offline', 'Share a board with a partner', 'Backups you can download'];
+---
+<section class="section" id="pricing" aria-labelledby="pricing-title">
+  <div class="wrap split">
+    <div class="section-head">
+      <p class="label">Pricing</p>
+      <h2 id="pricing-title">Free while in beta. <span class="quiet">Every feature, every device.</span></h2>
+      <p>There’s no paid plan yet. If one comes, you’ll hear about it before anything changes, and you can always download everything you’ve entered.</p>
+    </div>
+    <div class="card price">
+      <div class="p-top"><span class="chip progress">Beta</span></div>
+      <div class="amount num">NZ$0</div>
+      <p class="per">No card details needed.</p>
+      <ul>{included.map(i => <li><Icon name="tick" size={18} />{i}</li>)}</ul>
+      <a class="btn btn-primary btn-lg" href={APP}>Get started free <Icon name="arrow" size={16} /></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .price { padding: 32px; max-width: 440px; justify-self: end; width: 100%; display: grid; gap: 14px; box-shadow: var(--shadow-float); }
+  .amount { font-size: 56px; font-weight: 600; line-height: 1; letter-spacing: -0.04em; }
+  .per { color: var(--muted); font-size: 14px; margin-top: -4px; }
+  ul { list-style: none; display: grid; gap: 10px; padding: 18px 0; border-block: 1px solid var(--border); margin-block: 4px 8px; }
+  li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--text-2); }
+  li :global(svg) { color: var(--pos); flex: none; margin-top: 2px; }
+  @media (max-width: 960px) { .price { justify-self: stretch; max-width: none; } }
+  @media (max-width: 760px) { .price { padding: 24px; } }
+</style>

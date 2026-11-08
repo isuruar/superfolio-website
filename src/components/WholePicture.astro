@@ -1,0 +1,145 @@
+---
+import { history, loan, money, payoff, fmtMonth, currencies } from '../lib/sample';
+
+// Net-worth history chart, drawn to one scale.
+const W = 560, H = 210, L = 44, R = 64, T = 16, B = 28;
+const yMin = 70000, yMax = 85000, ticks = [70000, 75000, 80000, 85000];
+const x = (i: number) => L + i * (W - L - R) / (history.length - 1);
+const y = (v: number) => T + (1 - (v - yMin) / (yMax - yMin)) * (H - T - B);
+const line = history.map((h, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(h.total).toFixed(1)}`).join(' ');
+const area = `${line} L${x(history.length - 1).toFixed(1)} ${y(yMin)} L${x(0)} ${y(yMin)} Z`;
+const months = history.map(h => new Date(h.date).toLocaleDateString('en-NZ', { month: 'short' }));
+const last = history[history.length - 1], first = history[0];
+const chartLabel = `Net worth from ${money(first.total)} in ${months[0]} to ${money(last.total)} in ${months[months.length - 1]}, rising every month.`;
+
+// Loans: what paying a bit extra does.
+const EXTRA = 50;
+const base = payoff(loan.balance, loan.monthly, loan.rate);
+const more = payoff(loan.balance, loan.monthly + EXTRA, loan.rate);
+const sooner = base.months - more.months, saved = base.interest - more.interest;
+
+const fx = [
+  { code: 'LKR', amount: '1,000,000', nzd: 'NZ$5,500', name: 'Savings in Colombo' },
+  { code: 'AUD', amount: '6,000',     nzd: 'NZ$6,540', name: 'ASX shares' },
+  { code: 'GBP', amount: '2,400',     nzd: 'NZ$5,280', name: 'UK current account' },
+];
+---
+<section class="section" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="label">The whole picture</p>
+      <h2 id="how-title">Everything you own and owe, <span class="quiet">in words you already use.</span></h2>
+      <p>Bank accounts, KiwiSaver, shares, the car, the loan, the savings you left back home. Add each one once and Superfolio keeps the total.</p>
+    </div>
+
+    <div class="bento">
+      <article class="tile wide">
+        <div class="tile-copy">
+          <h3>Watch the line move</h3>
+          <p>Save a snapshot of your net worth whenever you like. Over time you see the trend, not just today’s number.</p>
+        </div>
+        <figure class="chart">
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={chartLabel}>
+            <defs><linearGradient id="nw-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--text)" stop-opacity=".10" /><stop offset="1" stop-color="var(--text)" stop-opacity="0" /></linearGradient></defs>
+            {ticks.map(t => <g><line x1={L} x2={W - R + 8} y1={y(t)} y2={y(t)} class="grid" /><text x={L - 10} y={y(t) + 4} class="axis" text-anchor="end">{t / 1000}K</text></g>)}
+            {months.map((m, i) => <text x={x(i)} y={H - 6} class="axis" text-anchor="middle">{m}</text>)}
+            <path d={area} fill="url(#nw-fill)" />
+            <path d={line} class="line" />
+            {history.map((h, i) => <circle cx={x(i)} cy={y(h.total)} r={i === history.length - 1 ? 5 : 3} class={i === history.length - 1 ? 'end' : 'pt'} />)}
+            <text x={x(history.length - 1) + 10} y={y(last.total) + 4} class="end-label">{(last.total / 1000).toFixed(1)}K</text>
+          </svg>
+        </figure>
+      </article>
+
+      <article class="tile">
+        <div class="tile-copy">
+          <h3>20 currencies, one total</h3>
+          <p>Money abroad is converted with live rates. The original amount stays right beside it.</p>
+        </div>
+        <ul class="fx">
+          {fx.map(f => <li><span class="code">{f.code}</span><span class="fx-name">{f.name}</span><span class="fx-val num">{f.amount}<small>≈ {f.nzd}</small></span></li>)}
+        </ul>
+        <p class="fine">{currencies.join(' · ')}</p>
+      </article>
+
+      <article class="tile">
+        <div class="tile-copy">
+          <h3>A car that revalues itself</h3>
+          <p>Tell it the year, the kilometres and the condition. The value follows as the car ages, so you don’t have to guess.</p>
+        </div>
+        <div class="mini">
+          <div class="mini-row"><span>2019 hatchback</span><b class="num">NZ$14,300</b></div>
+          <div class="specs"><span>2019</span><span>62,000 km</span><span>Good condition</span></div>
+        </div>
+      </article>
+
+      <article class="tile">
+        <div class="tile-copy">
+          <h3>Loans with an end date</h3>
+          <p>Each loan gets a payment schedule and a payoff date. Try paying a bit extra and see what it saves.</p>
+        </div>
+        <div class="mini">
+          <div class="mini-row"><span>Car loan · {money(loan.monthly)}/mo</span><b class="num">{money(loan.balance)}</b></div>
+          <div class="payoff">
+            <div><span class="label">Paid off</span><b class="num" data-loan-months={base.months}>{fmtMonth(base.end)}</b></div>
+            <div class="extra"><span class="label">+{money(EXTRA)}/mo</span><b class="num" data-loan-months={more.months}>{fmtMonth(more.end)}</b></div>
+          </div>
+          <p class="gain">{sooner} {sooner === 1 ? 'month' : 'months'} sooner, about {money(Math.round(saved / 10) * 10)} less interest</p>
+        </div>
+      </article>
+
+      <article class="tile">
+        <div class="tile-copy">
+          <h3>Your own categories</h3>
+          <p>Cash, unit trusts and stocks are built in. Add a type for anything else you want to count.</p>
+        </div>
+        <ul class="chips">
+          <li style="--c:var(--type-cash)">Cash</li><li style="--c:var(--type-funds)">Unit trusts</li><li style="--c:var(--type-stocks)">Stocks</li><li style="--c:var(--type-other)">Vehicle</li><li class="custom">Property</li><li class="custom">Business</li><li class="add">+ Add type</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bento { margin-top: var(--space-8); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .tile { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 28px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+  .wide { grid-column: span 2; }
+  .tile-copy { display: grid; gap: 6px; max-width: 30rem; }
+  .tile h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.3; }
+  .tile p { color: var(--text-2); font-size: 15px; }
+  .chart { margin: auto 0 0; }
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .grid { stroke: var(--chart-grid); stroke-width: 1; }
+  .axis { fill: var(--chart-text); font: 500 11px var(--font-num); }
+  .line { fill: none; stroke: var(--text); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .pt { fill: var(--card); stroke: var(--text); stroke-width: 1.5; }
+  .end { fill: var(--text); stroke: var(--card); stroke-width: 2; }
+  .end-label { fill: var(--text); font: 700 13px var(--font-num); }
+  .fx { list-style: none; display: grid; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); margin-top: auto; }
+  .fx li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 11px 14px; border-bottom: 1px solid var(--border); }
+  .fx li:last-child { border-bottom: 0; }
+  .code { font: 700 11px/1 var(--font-num); letter-spacing: .04em; padding: 5px 6px; border-radius: 6px; background: var(--bg); color: var(--text-2); }
+  .fx-name { font-size: 13.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fx-val { text-align: right; font-weight: 600; font-size: 14px; }
+  .fx-val small { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
+  .tile .fine { font: 500 11.5px/1.6 var(--font-num); color: var(--muted); letter-spacing: .02em; margin-top: -8px; }
+  .mini { margin-top: auto; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px; display: grid; gap: 12px; }
+  .mini-row { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; font-weight: 600; }
+  .mini-row b { font-weight: 600; }
+  .specs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .specs span { font-size: 12.5px; padding: 4px 9px; border-radius: var(--r-pill); background: var(--bg); color: var(--text-2); border: 1px solid var(--border); }
+  .payoff { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .payoff > div { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; background: var(--bg); }
+  .payoff b { font-size: 16px; font-weight: 700; }
+  .payoff .extra { background: var(--pos-bg); }
+  .payoff .extra .label { color: var(--pos); }
+  .tile .gain { font-size: 13px; color: var(--pos); font-weight: 600; }
+  .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+  .chips li { font-size: 13px; font-weight: 600; padding: 7px 12px 7px 10px; border-radius: var(--r-pill); background: var(--card); border: 1px solid var(--border); display: inline-flex; gap: 7px; align-items: center; }
+  .chips li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--neutral-fill)); }
+  .chips .add { color: var(--muted); border-style: dashed; }
+  .chips .add::before { display: none; }
+  @media (max-width: 960px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 680px) { .bento { grid-template-columns: minmax(0, 1fr); } .wide { grid-column: auto; } .tile { padding: 22px; } }
+</style>

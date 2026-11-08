@@ -1,0 +1,116 @@
+---
+import { plan, freeToSpend, netWorth, money } from '../lib/sample';
+import Icon from './Icon.astro';
+const parts = [
+  { key: 'fixed', label: 'Fixed costs', weekly: plan.fixed, cls: 's1' },
+  { key: 'investments', label: 'Investing', weekly: plan.investments, cls: 's2' },
+  { key: 'savings', label: 'Savings goals', weekly: plan.savings, cls: 's3' },
+  { key: 'free', label: 'Free to spend', weekly: freeToSpend, cls: 'free' },
+];
+// Projection: today's net worth, plus what the plan puts away each month, growing at a rate the person sets.
+const RATE = 0.06, YEARS = 10;
+const perMonth = (plan.investments + plan.savings) * 52 / 12;
+const proj = Array.from({ length: YEARS + 1 }, (_, yr) => { let v = netWorth; for (let m = 0; m < yr * 12; m++) v = v * (1 + RATE / 12) + perMonth; return v; });
+const PW = 320, PH = 120, top = Math.ceil(proj[YEARS] / 100000) * 100000;
+const bw = PW / (YEARS + 1) - 6;
+const k = (v: number) => `NZ$${Math.round(v / 1000)}K`;
+---
+<section class="section" aria-labelledby="plan-title">
+  <div class="wrap split flip">
+    <div>
+      <div class="section-head">
+        <p class="label">Spending plan</p>
+        <h2 id="plan-title">Know what’s free to spend. <span class="quiet">After bills and saving.</span></h2>
+        <p>Put in your pay, your regular costs and what you set aside. Superfolio shows what’s left each week, so a coffee or a weekend away isn’t a guess.</p>
+      </div>
+      <ul class="points">
+        <li><Icon name="check" /><span><b>Weekly or monthly,</b> whichever way you think about money.</span></li>
+        <li><Icon name="check" /><span><b>Linked to your goals,</b> so what you save for a goal is already counted.</span></li>
+        <li><Icon name="check" /><span><b>A projection of the years ahead</b> from your own plan, at a growth rate you choose.</span></li>
+      </ul>
+    </div>
+
+    <div class="tray visual" role="group" aria-label="Spending plan in the app, with sample figures">
+      <span class="sample-tag">Sample figures</span>
+      <article class="card planc" data-plan aria-label="Spending plan">
+        <div class="p-head">
+          <span class="label">Free to spend</span>
+          <div class="seg" role="group" aria-label="Show amounts">
+            <button type="button" aria-pressed="true" data-period="week">Weekly</button>
+            <button type="button" aria-pressed="false" data-period="month">Monthly</button>
+          </div>
+        </div>
+        <div class="free-amt num"><span data-amt={freeToSpend}>{money(freeToSpend)}</span><small data-per>/wk</small></div>
+        <p class="p-sub">Take-home <b class="num" data-amt={plan.takeHome}>{money(plan.takeHome)}</b> <span data-per>/wk</span></p>
+        <div class="stack" aria-hidden="true">{parts.map(p => <i class={p.cls} style={`flex:${p.weekly}`}></i>)}</div>
+        <ul class="p-rows">
+          {parts.map(p => <li><span class={`sw ${p.cls}`}></span><span>{p.label}</span><b class="num" data-amt={p.weekly}>{money(p.weekly)}</b></li>)}
+        </ul>
+        <p class="sr-only" aria-live="polite" data-plan-live></p>
+      </article>
+      <article class="card proj" aria-label={`Net-worth projection: ${k(proj[0])} today, about ${k(proj[YEARS])} in ${YEARS} years at ${RATE * 100}% a year`}>
+        <div class="label">Projection · {YEARS} years</div>
+        <div class="proj-nums"><span class="num">{k(proj[0])}</span><Icon name="arrow" size={14} /><b class="num">{k(proj[YEARS])}</b></div>
+        <svg viewBox={`0 0 ${PW} ${PH}`} aria-hidden="true">
+          {proj.map((v, i) => <rect x={i * (bw + 6) + 3} y={PH - v / top * PH} width={bw} height={v / top * PH} rx="3" class={i === 0 ? 'now' : i === YEARS ? 'last' : ''} />)}
+        </svg>
+        <p class="fine">At {RATE * 100}% a year, a rate you set. A projection from your own plan, not a forecast.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-plan]').forEach(card => {
+    const money = (v: number) => 'NZ$' + Math.round(v).toLocaleString('en-NZ');
+    const btns = card.querySelectorAll<HTMLButtonElement>('[data-period]');
+    const amts = [...card.querySelectorAll<HTMLElement>('[data-amt]')];
+    btns.forEach(b => b.addEventListener('click', () => {
+      const month = b.dataset.period === 'month';
+      btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      // Monthly = weekly × 52 ÷ 12. "Free to spend" is what's left, so the rows always add up.
+      const conv = (w: number) => Math.round(month ? w * 52 / 12 : w);
+      const [free, takeHome, ...rows] = amts;
+      const rowVals = rows.slice(0, 3).map(r => conv(+r.dataset.amt!));
+      const takeV = conv(+takeHome.dataset.amt!), freeV = takeV - rowVals.reduce((s, v) => s + v, 0);
+      free.textContent = money(freeV); takeHome.textContent = money(takeV);
+      rows.forEach((r, i) => r.textContent = money(i < 3 ? rowVals[i] : freeV));
+      card.querySelectorAll('[data-per]').forEach(p => p.textContent = month ? '/mo' : '/wk');
+      card.querySelector('[data-plan-live]')!.textContent = `Showing ${month ? 'monthly' : 'weekly'} amounts. Free to spend ${money(freeV)}.`;
+    }));
+  });
+</script>
+
+<style>
+  .visual { padding: 52px 28px 28px; display: grid; grid-template-columns: minmax(0, 1fr); }
+  .planc { margin-right: 96px; }
+  .proj { justify-self: end; width: 270px; margin-top: 12px; position: relative; box-shadow: var(--shadow-float); }
+  .planc { padding: 22px; }
+  .p-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .seg { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); }
+  .seg button { border: 0; background: transparent; font: 600 12.5px/1 var(--font-ui); color: var(--muted); padding: 8px 11px; min-height: 32px; border-radius: 7px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .free-amt { margin-top: 10px; font-weight: 600; font-size: clamp(2.4rem, 2rem + 1.4vw, 3.1rem); line-height: 1; letter-spacing: -0.035em; color: var(--pos); }
+  .free-amt small { font-size: 15px; font-weight: 600; letter-spacing: 0; color: var(--muted); margin-left: 4px; }
+  .p-sub { margin-top: 10px; font-size: 13.5px; color: var(--muted); }
+  .p-sub b { color: var(--text); font-weight: 600; }
+  .stack { margin-top: 18px; display: flex; gap: 3px; height: 10px; }
+  .stack i { border-radius: 3px; min-width: 4px; }
+  .s1 { background: color-mix(in srgb, var(--text) 82%, transparent); }
+  .s2 { background: color-mix(in srgb, var(--text) 48%, transparent); }
+  .s3 { background: color-mix(in srgb, var(--text) 24%, transparent); }
+  .stack .free, .sw.free { background: var(--pos-fill); }
+  .p-rows { list-style: none; margin-top: 16px; display: grid; }
+  .p-rows li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 0; border-top: 1px solid var(--border); font-size: 14px; }
+  .p-rows b { font-weight: 600; }
+  .sw { width: 10px; height: 10px; border-radius: 3px; }
+  .proj { padding: 18px; display: grid; gap: 10px; }
+  .proj-nums { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+  .proj-nums b { color: var(--text); font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+  .proj svg { width: 100%; height: auto; display: block; }
+  .proj rect { fill: color-mix(in srgb, var(--text) 18%, transparent); }
+  .proj rect.now { fill: color-mix(in srgb, var(--text) 45%, transparent); }
+  .proj rect.last { fill: var(--text); }
+  .fine { font-size: 12px; color: var(--muted); line-height: 1.45; }
+  @media (max-width: 760px) { .visual { padding: 44px 12px 12px; border-radius: 24px; } .planc { padding: 18px; margin-right: 0; } .proj { width: auto; margin: 12px 0 0 32px; } }
+</style>

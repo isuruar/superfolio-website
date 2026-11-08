@@ -1,0 +1,56 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+const APP = 'https://superfoliomoney.vercel.app';
+---
+<header class="nav">
+  <div class="wrap nav-row">
+    <a class="brand" href="/" aria-label="Superfolio home"><Logo id="logo-nav" height={26} /></a>
+    <nav aria-label="Main">
+      <ul class="links">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#goals">Goals</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="end">
+      <a class="signin" href={APP}>Sign in</a>
+      <button class="theme" type="button" data-theme-toggle aria-label="Switch to dark mode">
+        <Icon name="moon" size={18} class="i-moon" /><Icon name="sun" size={18} class="i-sun" />
+      </button>
+      <a class="btn btn-primary open" href={APP}>Open the app</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-theme-toggle]')!;
+  const root = document.documentElement;
+  const label = () => btn.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  label();
+  btn.addEventListener('click', () => { (window as any).__sfTheme.set(root.dataset.theme === 'dark' ? 'light' : 'dark'); label(); });
+  new MutationObserver(label).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  // A hairline appears under the bar once the page scrolls.
+  const nav = document.querySelector('.nav')!;
+  const onScroll = () => nav.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+</script>
+
+<style>
+  .nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--page) 84%, transparent); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid transparent; transition: border-color var(--dur-base); padding-top: env(safe-area-inset-top, 0px); }
+  .nav:global(.scrolled) { border-bottom-color: var(--border); }
+  .nav-row { display: flex; align-items: center; gap: 32px; height: 68px; }
+  .brand { color: var(--text); display: inline-flex; padding: 4px 0; border-radius: 8px; }
+  .links { display: flex; gap: 28px; list-style: none; font-size: 15px; font-weight: 500; color: var(--text-2); }
+  .links a { text-decoration: none; }
+  .links a:hover { color: var(--text); }
+  .end { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .signin { font-size: 15px; font-weight: 500; color: var(--text-2); text-decoration: none; padding: 10px 12px; }
+  .signin:hover { color: var(--text); }
+  .theme { width: 40px; height: 40px; border-radius: var(--r-pill); border: 1px solid var(--border); background: transparent; color: var(--text-2); display: grid; place-items: center; cursor: pointer; }
+  .theme:hover { color: var(--text); border-color: var(--border-strong); }
+  .theme :global(svg) { grid-area: 1 / 1; }
+  :global(:root[data-theme="dark"]) .theme :global(.i-moon), :global(:root:not([data-theme="dark"])) .theme :global(.i-sun) { display: none; }
+  @media (max-width: 860px) { .links, .signin { display: none; } .nav-row { gap: 12px; height: 60px; } .open { min-height: 40px; padding: 0 16px; font-size: 14px; } }
+</style>

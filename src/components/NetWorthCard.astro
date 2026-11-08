@@ -1,0 +1,80 @@
+---
+import { netWorth, totalAssets, loan, byType, history, money, short, pct, payoff, fmtMonth } from '../lib/sample';
+import Icon from './Icon.astro';
+const delta = netWorth - history[history.length - 2].total;
+const sinceLabel = new Date(history[history.length - 2].date).toLocaleDateString('en-NZ', { day: 'numeric', month: 'long' });
+// Donut: 4 segments with small gaps, drawn on one circle.
+const R = 46, C = 2 * Math.PI * R, GAP = 2.5;
+let offset = 0;
+const segs = byType.map(t => { const len = Math.max(0, t.share * C - GAP); const s = { ...t, len, offset: -offset }; offset += t.share * C; return s; });
+const ariaDonut = 'Assets by type: ' + byType.map(t => `${t.label} ${pct(t.share)}`).join(', ');
+const loanEnd = payoff(loan.balance, loan.monthly, loan.rate);
+---
+<article class="card nw" aria-label="Net worth">
+  <div class="top">
+    <div>
+      <div class="label">Total net worth · NZD</div>
+      <div class="amount"><span class="cur">NZ$</span>{Math.round(netWorth).toLocaleString('en-NZ')}</div>
+      <div class="delta">
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.5 10 8H2z" fill="var(--pos)" /></svg>
+        <b class="num">{money(delta)}</b> since {sinceLabel}
+      </div>
+      <div class="sum"><span>Assets <b>{money(totalAssets)}</b></span><span>Liabilities <b>{money(loan.balance)}</b></span></div>
+    </div>
+    <div class="donut-wrap">
+      <svg class="donut" viewBox="0 0 120 120" role="img" aria-label={ariaDonut}>
+        <g transform="rotate(-90 60 60)">
+          <circle cx="60" cy="60" r={R} stroke="var(--border)" />
+          {segs.map(s => <circle cx="60" cy="60" r={R} style={`stroke:var(${s.token})`} stroke-dasharray={`${s.len.toFixed(1)} ${C.toFixed(1)}`} stroke-dashoffset={s.offset.toFixed(1)} />)}
+        </g>
+      </svg>
+      <ul class="legend" aria-hidden="true">
+        {byType.map(t => <li><i style={`background:var(${t.token})`}></i><span>{t.label}</span><small><em class="amt">{short(t.value)} · </em>{pct(t.share)}</small></li>)}
+      </ul>
+    </div>
+  </div>
+  <ul class="rows">
+    <li class="row"><span class="ico" style="--c:var(--type-funds)"><Icon name="trend" size={16} /></span><div><div class="name">KiwiSaver Growth</div><div class="meta">Unit trusts</div></div><div class="val">NZ$38,650</div></li>
+    <li class="row"><span class="ico" style="--c:var(--type-cash)"><Icon name="globe" size={16} /></span><div><div class="name">Savings in Colombo</div><div class="meta">Cash · live rate</div></div><div class="val">LKR 1,000,000<small>≈ NZ$5,500</small></div></li>
+    <li class="row"><span class="ico" style="--c:var(--type-other)"><Icon name="car" size={16} /></span><div><div class="name">2019 hatchback</div><div class="meta">Revalues from age and kms</div></div><div class="val">NZ$14,300</div></li>
+    <li class="row"><span class="ico" style="--c:var(--muted)"><Icon name="card" size={16} /></span><div><div class="name">Car loan</div><div class="meta">Paid off <span data-loan-months={loanEnd.months}>{fmtMonth(loanEnd.end)}</span></div></div><div class="val">{money(-loan.balance)}</div></li>
+  </ul>
+</article>
+
+<style>
+  .nw { padding: 32px 32px 12px; }
+  .top { display: flex; gap: 28px; align-items: center; justify-content: space-between; }
+  .amount { margin-top: 6px; font-family: var(--font-num); font-weight: 600; font-size: clamp(2.6rem, 2rem + 2.2vw, 3.9rem); line-height: 1; letter-spacing: -0.035em; font-variant-numeric: tabular-nums; }
+  .cur { font-size: .58em; letter-spacing: -0.02em; color: var(--text-2); vertical-align: .36em; margin-right: 2px; }
+  .delta { margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+  .delta b { color: var(--pos); font-weight: 600; }
+  .sum { margin-top: 14px; display: flex; gap: 18px; font-size: 13.5px; color: var(--muted); flex-wrap: wrap; }
+  .sum b { color: var(--text); font-weight: 600; font-family: var(--font-num); }
+  .donut-wrap { display: flex; align-items: center; gap: 20px; flex: none; }
+  .donut { width: 132px; height: 132px; flex: none; }
+  .donut circle { fill: none; stroke-width: 14; }
+  .legend { list-style: none; display: grid; gap: 9px; font-size: 13px; }
+  .legend li { display: grid; grid-template-columns: 10px auto; column-gap: 8px; align-items: center; }
+  .legend i { width: 8px; height: 8px; border-radius: 50%; }
+  .legend span { color: var(--text-2); font-weight: 500; }
+  .legend small { grid-column: 2; font-family: var(--font-num); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .legend em { font-style: normal; }
+  .rows { list-style: none; margin: 28px -32px 0; border-top: 1px solid var(--border); }
+  .row { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px 32px; border-bottom: 1px solid var(--border); }
+  .row:last-child { border-bottom: 0; }
+  .ico { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+  .name { font-weight: 600; font-size: 14.5px; letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .meta { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+  .val { text-align: right; font-family: var(--font-num); font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .val small { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
+  @media (max-width: 760px) {
+    .nw { padding: 22px 20px 4px; }
+    .top { flex-direction: column; align-items: flex-start; gap: 22px; }
+    .donut-wrap { width: 100%; gap: 16px; }
+    .donut { width: 88px; height: 88px; }
+    .legend { flex: 1; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+    .legend .amt { display: none; }
+    .rows { margin: 20px -20px 0; }
+    .row { padding: 13px 20px; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; }
+  }
+</style>

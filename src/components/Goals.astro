@@ -1,0 +1,93 @@
+---
+import { goals, loan, money, fmtDate, fmtMonth, payoff } from '../lib/sample';
+import Icon from './Icon.astro';
+const MONTH = 30.4375 * 864e5;
+const loanPlan = payoff(loan.balance, loan.monthly, loan.rate);
+const rows = goals.map((g: any) => {
+  if (g.loan) return { name: g.name, kind: g.kind, status: 'progress', label: 'In progress', detail: `${money(loan.balance)} left · ${money(loan.monthly)}/mo`, p: 0.38, date: fmtMonth(loanPlan.end), loanMonths: loanPlan.months };
+  if (g.reached) return { name: g.name, kind: g.kind, status: 'done', label: 'Complete', detail: `${money(g.saved)} saved`, p: 1, date: `Reached ${fmtDate(new Date(g.reached))}` };
+  if (!g.monthly) return { name: g.name, kind: g.kind, status: 'idle', label: 'Not started', detail: `${money(g.target)} target`, p: 0, date: 'Add a saving rate to get a date' };
+  const remaining = g.target - g.saved;
+  return { name: g.name, kind: g.kind, status: 'progress', label: 'In progress', detail: `${money(g.saved)} of ${money(g.target)} · ${money(g.monthly)}/mo`, p: g.saved / g.target, date: fmtDate(new Date(Date.now() + remaining / g.monthly * MONTH)), remaining, monthly: g.monthly };
+});
+const log = [
+  { month: 'November', total: 370, items: [{ day: '7 Nov', amt: 50, how: 'One tap' }, { day: '1 Nov', amt: 320, how: 'Auto-add' }] },
+  { month: 'October',  total: 340, items: [{ day: '14 Oct', amt: 20, how: 'One tap' }, { day: '1 Oct', amt: 320, how: 'Auto-add' }] },
+];
+---
+<section class="section" id="goals" aria-labelledby="goals-title">
+  <div class="wrap split">
+    <div>
+      <div class="section-head">
+        <p class="label">Goals</p>
+        <h2 id="goals-title">Goals with real dates. <span class="quiet">Not just a progress bar.</span></h2>
+        <p>Each goal works out when you’ll finish at the rate you’re saving. Put a little extra in and the date comes closer. Set it to auto-add and it keeps moving by itself.</p>
+      </div>
+      <ul class="points">
+        <li><Icon name="check" /><span><b>Savings, assets and loan payoffs</b> all in one list, so a debt counts as a goal too.</span></li>
+        <li><Icon name="check" /><span><b>One-tap contributions</b> of +10, +20 or +50, or any amount. Undo if you slip.</span></li>
+        <li><Icon name="check" /><span><b>A history for every goal,</b> grouped by month, so you can see what went in.</span></li>
+        <li><Icon name="check" /><span><b>Mark it complete</b> and keep it, or archive it. Add a photo to remind you what it’s for.</span></li>
+      </ul>
+    </div>
+
+    <div class="tray visual" role="group" aria-label="Goals in the app, with sample figures">
+      <span class="sample-tag">Sample figures</span>
+      <article class="card list" aria-label="Goal list">
+        <div class="list-head"><span class="label">5 goals</span><span class="filters" aria-hidden="true"><span class="on">All</span><span>In progress</span><span>Complete</span></span></div>
+        <ul>
+          {rows.map(r => (
+            <li class="goal-row" data-goal-remaining={r.remaining} data-goal-monthly={r.monthly}>
+              <div class="g-top"><span class="g-name">{r.name}</span><span class={`chip ${r.status}`}>{r.label}</span></div>
+              <div class="g-bar" aria-hidden="true"><i class={r.status} style={`width:${(r.p * 100).toFixed(0)}%`}></i></div>
+              <div class="g-meta"><span>{r.kind} · {r.detail}</span>{r.loanMonths ? <b class="num">Paid off <span data-loan-months={r.loanMonths}>{r.date}</span></b> : <b class={`num ${r.status}`} data-date>{r.date}</b>}</div>
+            </li>
+          ))}
+        </ul>
+      </article>
+      <article class="card history" aria-label="Contribution history for Trip to Sri Lanka">
+        <div class="h-title"><span class="label">Trip to Sri Lanka</span><span class="h-sub">History</span></div>
+        {log.map(m => (
+          <div class="h-month">
+            <div class="h-mhead"><span>{m.month}</span><b class="num">+{money(m.total)}</b></div>
+            <ul>{m.items.map(i => <li><span>{i.day}</span><span class="how">{i.how}</span><b class="num">+{money(i.amt)}</b></li>)}</ul>
+          </div>
+        ))}
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .visual { padding: 52px 28px 28px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .list { margin-right: 72px; }
+  .history { justify-self: end; width: 260px; margin-top: 12px; position: relative; box-shadow: var(--shadow-float); }
+  .list { padding: 8px 0; }
+  .list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px 10px; }
+  .filters { display: flex; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
+  .filters span { padding: 4px 9px; border-radius: var(--r-pill); }
+  .filters .on { background: var(--bg); color: var(--text); }
+  .list ul { list-style: none; }
+  .goal-row { padding: 14px 20px; border-top: 1px solid var(--border); display: grid; gap: 8px; }
+  .g-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+  .g-name { font-weight: 600; font-size: 14.5px; letter-spacing: -0.01em; }
+  .g-bar { height: 5px; border-radius: var(--r-pill); background: var(--border); overflow: hidden; }
+  .g-bar i { display: block; height: 100%; border-radius: inherit; }
+  .g-bar .progress { background: var(--info-fill); }
+  .g-bar .done { background: var(--pos-fill); }
+  .g-meta { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
+  .g-meta b { color: var(--text); font-weight: 600; font-size: 13px; }
+  .g-meta b.done { color: var(--pos); }
+  .g-meta b.idle { color: var(--muted); font-weight: 500; font-family: var(--font-ui); }
+  .history { padding: 18px; display: grid; gap: 14px; }
+  .h-title { display: grid; gap: 2px; }
+  .h-sub { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+  .h-month { display: grid; gap: 6px; }
+  .h-mhead { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .h-mhead b { color: var(--pos); }
+  .h-month ul { list-style: none; display: grid; gap: 6px; }
+  .h-month li { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 6px; font-size: 12.5px; color: var(--muted); }
+  .h-month li b { color: var(--text); font-weight: 600; }
+  .how { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 760px) { .visual { padding: 44px 12px 12px; border-radius: 24px; } .goal-row { padding: 13px 16px; } .list-head { padding: 10px 16px; } .filters { display: none; } .list { margin-right: 0; } .history { width: auto; margin: 12px 0 0 32px; } }
+</style>

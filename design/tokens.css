@@ -1,0 +1,140 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Superfolio design tokens
+   One source for the website and the app. Names match the app's existing variables where they
+   overlap (--bg, --card, --border, --text, --muted, --pos, --neg, --warn, --info, --input-bg,
+   --chart-text, --chart-grid), so the app can drop this file in and keep its own class names.
+
+   Themes
+   - Light is the default on :root.
+   - Dark applies with  <html class="dark">  (how the app does it today)
+                    or  <html data-theme="dark">  (how the website does it).
+   - There is deliberately no prefers-color-scheme block here: each product decides when to go dark
+     (the site follows the system until someone chooses; the app keeps its own toggle).
+
+   Contrast (WCAG 2.2 AA): every text token below is at least 4.5:1 on --card and on --bg, in both
+   themes. Fills (--*-fill, --type-*) are for shapes, not text.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg: #F7F7F7;              /* app canvas · site trays and quiet bands */
+  --card: #FFFFFF;            /* cards, sheets, popovers */
+  --page: #FFFFFF;            /* website page background (the app uses --bg) */
+  --border: #E8E8E8;
+  --border-strong: #D9D7D3;   /* control outlines, hover borders */
+  --input-bg: #EFEFEF;
+
+  /* Ink */
+  --text: #18160F;            /* 17.6:1 on white */
+  --text-2: #4F4A43;          /* secondary copy, 8.4:1 */
+  --muted: #6B6560;           /* labels and captions, 5.7:1 (replaces the app's #A09890, which is 2.8:1) */
+
+  /* Status: semantic only, never decoration. Text-safe shades; fills are for bars, rings and dots. */
+  --pos: #047857;  --pos-fill: #10B981;  --pos-bg: #ECFDF5;    /* complete, gains */
+  --info: #2563EB; --info-fill: #2563EB; --info-bg: #EFF6FF;   /* in progress */
+  --warn: #B45309; --warn-fill: #F59E0B; --warn-bg: #FFFBEB;   /* needs a look */
+  --neg: #DC2626;  --neg-fill: #EF4444;  --neg-bg: #FEF2F2;    /* errors, losses */
+  --neutral-fill: #A8A29E;                                     /* not started */
+
+  /* Data: the app's asset types. Charts only. */
+  --type-cash: #2563EB;
+  --type-funds: #059669;      /* Unit trusts, KiwiSaver */
+  --type-stocks: #EA580C;
+  --type-other: #7C3AED;
+  --chart-text: var(--muted);
+  --chart-grid: var(--border);
+
+  /* Action */
+  --action: #18160F;          /* primary button */
+  --on-action: #FFFFFF;
+  --focus: #2563EB;           /* focus ring */
+
+  /* Inverse band (the one dark moment on the light site) */
+  --inverse-bg: #18160F;
+  --inverse-card: #24221B;
+  --inverse-border: #3A372F;
+  --inverse-text: #F4F2EE;
+  --inverse-muted: #B3ADA4;   /* 7.9:1 on --inverse-bg */
+
+  /* Type */
+  --font-ui: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-num: 'DM Sans Variable', 'DM Sans', 'Plus Jakarta Sans Variable', system-ui, sans-serif;  /* amounts, dates; use tabular-nums */
+
+  --text-display: clamp(2.5rem, 1.3rem + 3.6vw, 4rem);     /* 40 → 64 */
+  --text-h2: clamp(2rem, 1.4rem + 2vw, 2.75rem);           /* 32 → 44 */
+  --text-h3: 1.375rem;                                      /* 22 */
+  --text-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);    /* 17 → 20 */
+  --text-body: 1rem;                                        /* 16 */
+  --text-small: 0.875rem;                                   /* 14 */
+  --text-label: 0.71875rem;                                 /* 11.5, uppercase, +0.07em */
+
+  --leading-tight: 1.06;
+  --leading-heading: 1.12;
+  --leading-body: 1.55;
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.03em;
+  --tracking-label: 0.07em;
+
+  /* Space: 4px base */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px; --space-10: 128px;
+
+  /* Shape */
+  --r-sm: 8px;      /* chips, small buttons */
+  --r-md: 12px;     /* inputs, quick-add buttons */
+  --r-lg: 20px;     /* cards (same as the app's .card) */
+  --r-xl: 32px;     /* product trays, large panels */
+  --r-pill: 999px;  /* primary buttons, status chips */
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgba(24, 22, 15, .04), 0 8px 24px rgba(24, 22, 15, .06);
+  --shadow-float: 0 2px 4px rgba(24, 22, 15, .04), 0 24px 48px -8px rgba(24, 22, 15, .14);
+
+  /* Motion (the app already uses this curve for modals, toasts and dropdowns) */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 500ms;
+}
+
+:root.dark,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0D1117;
+  --card: #161B22;
+  --page: #0D1117;
+  --border: #30363D;
+  --border-strong: #3D444D;
+  --input-bg: #0D1117;
+
+  --text: #E6EDF3;
+  --text-2: #B6BFC9;
+  --muted: #8B949E;           /* 5.6:1 on --card (the app's #7D8590 is 4.7:1) */
+
+  --pos: #34D399;  --pos-fill: #10B981;  --pos-bg: rgba(16, 185, 129, .12);
+  --info: #60A5FA; --info-fill: #3B82F6; --info-bg: rgba(96, 165, 250, .12);
+  --warn: #FBBF24; --warn-fill: #F59E0B; --warn-bg: rgba(245, 158, 11, .12);
+  --neg: #F87171;  --neg-fill: #EF4444;  --neg-bg: rgba(239, 68, 68, .12);
+  --neutral-fill: #6E7681;
+
+  --type-cash: #60A5FA;
+  --type-funds: #34D399;
+  --type-stocks: #FB923C;
+  --type-other: #A78BFA;
+
+  --action: #E6EDF3;
+  --on-action: #0D1117;
+  --focus: #60A5FA;
+
+  --inverse-bg: #1B222B;
+  --inverse-card: #232B36;
+  --inverse-border: #36404C;
+  --inverse-text: #F0F4F8;
+  --inverse-muted: #A7B1BC;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+  --shadow-float: 0 2px 4px rgba(0, 0, 0, .3), 0 24px 48px -8px rgba(0, 0, 0, .55);
+}

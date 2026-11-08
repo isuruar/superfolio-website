@@ -1,0 +1,39 @@
+---
+import Logo from './Logo.astro';
+const APP = 'https://superfoliomoney.vercel.app';
+---
+<footer class="foot">
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <Logo id="logo-foot" height={24} />
+        <p>Know you’re on track.</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul>
+          <li><a href={APP}>Open the app</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="bottom">
+      <p>Superfolio isn’t a financial adviser and doesn’t give financial advice. It shows your own numbers and the maths behind them.</p>
+      <p>© {new Date().getFullYear()} Superfolio · Made in Aotearoa New Zealand</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot { border-top: 1px solid var(--border); padding-block: var(--space-8) calc(var(--space-7) + env(safe-area-inset-bottom, 0px)); }
+  .top { display: flex; justify-content: space-between; gap: var(--space-6); flex-wrap: wrap; }
+  .brand { display: grid; gap: 10px; color: var(--text); }
+  .brand p { color: var(--muted); font-size: 14px; }
+  ul { list-style: none; display: flex; gap: 8px 28px; flex-wrap: wrap; font-size: 15px; font-weight: 500; }
+  a { color: var(--text-2); text-decoration: none; display: inline-block; padding: 6px 0; }
+  a:hover { color: var(--text); }
+  .bottom { margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .bottom p:first-child { max-width: 36rem; }
+</style>

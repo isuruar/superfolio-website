@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+const APP = 'https://superfoliomoney.vercel.app';
+---
+<section class="section final" aria-labelledby="final-title">
+  <div class="wrap">
+    <div class="tray box">
+      <h2 id="final-title">Start with one account. <span class="quiet">Add the rest when you’re ready.</span></h2>
+      <div class="ctas"><a class="btn btn-primary btn-lg" href={APP}>Get started free <Icon name="arrow" size={16} /></a></div>
+      <p class="reassure">Free while in beta. No bank login needed.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .box { text-align: center; padding: var(--space-9) var(--space-6); display: grid; justify-items: center; gap: var(--space-5); }
+  h2 { font-size: var(--text-h2); font-weight: 600; line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); max-width: 22ch; }
+  .quiet { display: block; color: var(--muted); }
+  .reassure { font-size: 14px; color: var(--muted); }
+  @media (max-width: 760px) { .box { padding: var(--space-8) var(--space-5); border-radius: 24px; } .ctas, .ctas .btn { width: 100%; } }
+</style>

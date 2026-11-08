@@ -1,0 +1,82 @@
+---
+import { checkIn } from '../lib/sample';
+import Icon from './Icon.astro';
+const next = new Date(); next.setMonth(next.getMonth() + 1);
+const nextLabel = next.toLocaleDateString('en-NZ', { day: 'numeric', month: 'long' });
+---
+<section class="section" aria-labelledby="checkin-title">
+  <div class="wrap split">
+    <div>
+      <div class="section-head">
+        <p class="label">Monthly check-in</p>
+        <h2 id="checkin-title">Once a month. <span class="quiet">Two minutes. Done.</span></h2>
+        <p>You type your values in, so nothing changes behind your back. When a value hasn’t been checked for a month, Superfolio asks, gently. One sheet, confirm or update, and you’re finished.</p>
+      </div>
+      <ul class="points">
+        <li><Icon name="quiet" /><span><b>No streaks, no badges, no guilt.</b> Skip a month and nothing breaks.</span></li>
+        <li><Icon name="calendar" /><span><b>Only what’s due.</b> Values you updated recently stay out of the way.</span></li>
+        <li><Icon name="eyeOff" /><span><b>Privacy mode</b> hides every amount with one tap, and there’s a dark mode for late nights.</span></li>
+      </ul>
+    </div>
+
+    <div class="tray visual" role="group" aria-label="Monthly check-in in the app, with sample figures">
+      <span class="sample-tag">Sample figures</span>
+      <form class="card sheet" data-checkin aria-labelledby="ci-title">
+        <div class="grab" aria-hidden="true"></div>
+        <h3 id="ci-title">Check your values</h3>
+        <p class="ci-sub">These haven’t been checked for a while. Change any that moved, then save.</p>
+        <ul>
+          {checkIn.map((r, i) => (
+            <li class="ci-row">
+              <div class="ci-name"><label for={`ci-${i}`}>{r.name}</label><span class="ci-when" data-when>Checked {r.checked}</span></div>
+              <input id={`ci-${i}`} class="num" type="text" inputmode="decimal" value={r.value} autocomplete="off" />
+            </li>
+          ))}
+        </ul>
+        <div class="ci-foot">
+          <button class="btn btn-primary" type="submit" data-save>Save all</button>
+          <button class="btn btn-ghost" type="button" data-later>Not now</button>
+        </div>
+        <p class="ci-done" data-done role="status" aria-live="polite" hidden><Icon name="tick" size={18} /> <span>All up to date. Next check-in around {nextLabel}.</span></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-checkin]').forEach(form => {
+    const done = form.querySelector<HTMLElement>('[data-done]')!, foot = form.querySelector<HTMLElement>('.ci-foot')!;
+    const finish = (msg?: string) => {
+      foot.hidden = true; done.hidden = false;
+      if (msg) done.querySelector('span')!.textContent = msg;
+      requestAnimationFrame(() => done.classList.add('show'));
+    };
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      form.querySelectorAll<HTMLElement>('[data-when]').forEach(w => { w.textContent = 'Checked today'; w.classList.add('ok'); });
+      finish();
+    });
+    form.querySelector('[data-later]')!.addEventListener('click', () => finish('No problem. You can check them any time from Home.'));
+  });
+</script>
+
+<style>
+  .visual { padding: 52px 28px 28px; display: grid; justify-items: center; }
+  .sheet { width: 100%; max-width: 440px; padding: 14px 22px 22px; display: grid; gap: 14px; box-shadow: var(--shadow-float); border-radius: 24px; }
+  .grab { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong); justify-self: center; }
+  .sheet h3 { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; }
+  .ci-sub { font-size: 14px; color: var(--muted); margin-top: -8px; }
+  .sheet ul { list-style: none; display: grid; }
+  .ci-row { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--border); }
+  .ci-name { display: grid; gap: 2px; min-width: 0; }
+  .ci-name label { font-weight: 600; font-size: 14.5px; }
+  .ci-when { font-size: 12.5px; color: var(--warn); }
+  .ci-when:global(.ok) { color: var(--pos); }
+  input { width: 100%; height: 44px; border-radius: var(--r-md); border: 1px solid var(--border-strong); background: var(--input-bg); color: var(--text); padding: 0 12px; font-size: 15px; font-weight: 600; text-align: right; }
+  input:focus { outline: 2px solid var(--focus); outline-offset: 1px; border-color: transparent; }
+  .ci-foot { display: flex; gap: 8px; }
+  .ci-foot .btn { flex: 1; }
+  .ci-done { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 14px; border-radius: var(--r-md); background: var(--pos-bg); color: var(--pos); font-size: 14px; font-weight: 600; opacity: 0; transform: translateY(6px); transition: opacity .35s var(--ease-out), transform .35s var(--ease-out); }
+  .ci-done:global(.show) { opacity: 1; transform: none; }
+  @media (max-width: 760px) { .visual { padding: 44px 12px 12px; border-radius: 24px; } .sheet { padding: 12px 16px 16px; } .ci-row { grid-template-columns: minmax(0, 1fr) 132px; } }
+</style>

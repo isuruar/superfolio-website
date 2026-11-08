@@ -1,0 +1,83 @@
+---
+import NetWorthCard from './NetWorthCard.astro';
+import GoalCard from './GoalCard.astro';
+import Icon from './Icon.astro';
+const APP = 'https://superfoliomoney.vercel.app';
+const facts = [
+  { icon: 'globe',  title: '20 currencies',       body: 'Shown in NZ$, original kept' },
+  { icon: 'lock',   title: 'No bank login',       body: 'You type the numbers in' },
+  { icon: 'people', title: 'Share with a partner', body: 'One board, two logins' },
+  { icon: 'sync',   title: 'Syncs, works offline', body: 'Install it on any device' },
+  { icon: 'shield', title: 'No ads, ever',        body: 'We don’t sell your data' },
+];
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap intro">
+    <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Free while in beta. No bank login needed.</p>
+    <h1 id="hero-title"><span class="line">All your money, in one place.</span> <span class="line quiet">And a real date for every goal.</span></h1>
+    <p class="lede">Add what you own and owe in a few minutes. Superfolio adds it up across currencies and shows when you’ll reach the things you’re saving for. No spreadsheet, no finance jargon.</p>
+    <div class="ctas">
+      <a class="btn btn-primary btn-lg" href={APP}>Get started free <Icon name="arrow" size={16} /></a>
+      <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
+    </div>
+    <p class="reassure">No ads. We never sell your data.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="tray stage" role="group" aria-label="Superfolio app preview with sample figures">
+      <span class="sample-tag">Sample figures</span>
+      <div class="grid">
+        <NetWorthCard />
+        <div class="goal-col">
+          <GoalCard />
+          <p class="caption"><b>Try it.</b> Every contribution moves the date. This card works like the one in the app.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <ul class="facts">
+      {facts.map(f => <li><Icon name={f.icon} size={18} /><span><b>{f.title}</b>{f.body}</span></li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero { padding-top: 72px; }
+  .intro { text-align: center; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 10px; border: 1px solid var(--border); border-radius: var(--r-pill); font-size: 13.5px; font-weight: 500; color: var(--text-2); background: var(--card); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--info); box-shadow: 0 0 0 3px var(--info-bg); }
+  h1 { margin: 24px auto 0; max-width: 20ch; font-weight: 600; font-size: var(--text-display); line-height: var(--leading-tight); letter-spacing: var(--tracking-display); }
+  .line { display: block; }
+  .quiet { color: var(--muted); }
+  .lede { margin: 24px auto 0; max-width: 34em; font-size: var(--text-lead); color: var(--text-2); }
+  .ctas { margin-top: 36px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .reassure { margin-top: 16px; font-size: 14px; color: var(--muted); }
+  .stage { margin: 64px auto 0; max-width: 1120px; padding: 56px 56px 64px; overflow: hidden; scroll-margin-top: 88px; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 28px; align-items: start; }
+  .goal-col { padding-top: 56px; }
+  .caption { margin: 18px 4px 0; font-size: 14px; color: var(--muted); }
+  .caption b { color: var(--text); font-weight: 600; }
+  .facts { margin: 40px auto 0; max-width: 1120px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; list-style: none; }
+  .facts li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; font-size: 14px; color: var(--text-2); line-height: 1.4; }
+  .facts :global(svg) { flex: none; margin-top: 1px; color: var(--text); }
+  .facts b { display: block; color: var(--text); font-weight: 600; }
+  @media (max-width: 1040px) {
+    .stage { padding: 40px 32px 48px; }
+    .grid { grid-template-columns: minmax(0, 1fr); }
+    .goal-col { padding-top: 0; margin-top: -8px; max-width: 420px; justify-self: end; width: 100%; }
+    .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 760px) {
+    .hero { padding-top: 40px; }
+    h1 { margin-top: 20px; letter-spacing: -0.03em; }
+    .lede { margin-top: 18px; }
+    .ctas { margin-top: 28px; flex-direction: column; align-items: stretch; }
+    .stage { margin-top: 44px; border-radius: 24px; padding: 40px 12px 16px; }
+    .goal-col { margin-top: -4px; max-width: none; }
+    .facts { grid-template-columns: 1fr 1fr; margin-top: 28px; gap: 4px; }
+    .facts li { padding: 8px 4px; }
+  }
+  @media (max-width: 380px) { .facts { grid-template-columns: 1fr; } }
+</style>

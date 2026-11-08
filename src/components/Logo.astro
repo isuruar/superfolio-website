@@ -1,0 +1,12 @@
+---
+// The outlined wordmark from design/logo, in currentColor. Each use gets its own mask id.
+import raw from '../../design/logo/superfolio-wordmark-mono.svg?raw';
+interface Props { id: string; height?: number; class?: string }
+const { id, height = 26, class: cls } = Astro.props;
+const svg = raw
+  .replace(/id="m"/g, `id="${id}"`).replace(/url\(#m\)/g, `url(#${id})`)
+  .replace(/<title>.*?<\/title>/, '')
+  .replace(/ role="img" aria-label="Superfolio"/, ' aria-hidden="true" focusable="false"')
+  .replace(/ width="[\d.]+" height="32"/, ` height="${height}" style="width:auto;display:block"`);
+---
+<span class={cls} set:html={svg} />

@@ -1,0 +1,20 @@
+{
+  "name": "superfolio-website",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check:screens": "node scripts/screens.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "5.3.0",
+    "astro": "7.4.2"
+  }
+}

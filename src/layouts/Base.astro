@@ -1,0 +1,55 @@
+---
+import '@fontsource-variable/plus-jakarta-sans/wght.css';
+import '@fontsource-variable/dm-sans/wght.css';
+import '../styles/global.css';
+
+interface Props { title?: string; description?: string }
+const {
+  title = 'Superfolio · All your money, in one place',
+  description = 'See everything you own and owe in one place, in 20 currencies, and when you’ll reach the things you’re saving for. Free while in beta. No bank login needed.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en-NZ">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0D1117" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Theme: follow the system until someone chooses. Runs before paint, so there is no flash. -->
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        let saved = null; try { saved = localStorage.getItem('sf-theme'); } catch {}
+        const q = new URLSearchParams(location.search).get('theme');
+        const sys = matchMedia('(prefers-color-scheme: dark)');
+        const apply = () => { const t = q || saved || (sys.matches ? 'dark' : 'light'); root.dataset.theme = t; };
+        apply();
+        sys.addEventListener?.('change', () => { if (!saved && !q) apply(); });
+        window.__sfTheme = { set(t) { saved = t; try { localStorage.setItem('sf-theme', t); } catch {} apply(); } };
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <slot />
+    <script>
+      import '../scripts/live-dates';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .skip { position: absolute; left: 16px; top: -60px; background: var(--action); color: var(--on-action); padding: 10px 16px; border-radius: var(--r-pill); z-index: 20; text-decoration: none; font-weight: 600; }
+  .skip:focus { top: 12px; }
+</style>

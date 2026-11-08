@@ -24,7 +24,7 @@ const points = [
 </section>
 
 <style>
-  .band { background: var(--inverse-bg); color: var(--inverse-text); padding-block: var(--space-10); margin-block: var(--space-6) var(--space-10); }
+  .band { background: var(--inverse-bg); color: var(--inverse-text); padding-block: calc(var(--section-gap) + 8px); margin-bottom: var(--section-gap); }
   .head { max-width: 42rem; display: grid; gap: var(--space-4); }
   .label { color: var(--inverse-muted); }
   h2 { font-size: var(--text-h2); font-weight: 600; line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); }
@@ -38,5 +38,5 @@ const points = [
   .site-note { margin-top: var(--space-6); display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--inverse-muted); }
   .band :global(:focus-visible) { outline-color: var(--inverse-text); }
   @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 600px) { .band { padding-block: var(--space-8); margin-block: 0 var(--space-8); } .grid { grid-template-columns: minmax(0, 1fr); } .grid li { padding: 22px; } }
+  @media (max-width: 600px) { .band { padding-block: var(--section-gap); } .grid { grid-template-columns: minmax(0, 1fr); } .grid li { padding: 22px; } }
 </style>

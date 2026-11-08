@@ -29,13 +29,14 @@ ul { margin: 0; padding: 0; }
 }
 
 /* Sections share one rhythm and one heading pattern: claim in ink, the "so what" in muted. */
-.section { padding-block: var(--space-10); }
-.section + .section { padding-top: 0; }
+/* One gap between sections: 96px on desktop, easing down to 64px on phones. */
+:root { --section-gap: clamp(64px, 40px + 3.5vw, 96px); }
+/* Each block owns only the gap below it, so scripts or other nodes between sections can’t double it. */
+.section { padding-block: 0 var(--section-gap); }
 .section-head { max-width: 40rem; display: grid; gap: var(--space-4); }
 .section-head h2 { font-size: var(--text-h2); font-weight: 600; line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); }
 .section-head h2 .quiet { color: var(--muted); display: block; }
 .section-head p:not(.label) { font-size: var(--text-lead); color: var(--text-2); }
-@media (max-width: 760px) { .section { padding-block: var(--space-8); } }
 
 /* Two-column feature rows */
 .split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--space-8); align-items: center; }

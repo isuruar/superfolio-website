@@ -3,13 +3,16 @@ import { goals, loan, money, fmtDate, fmtMonth, payoff } from '../lib/sample';
 import Icon from './Icon.astro';
 const MONTH = 30.4375 * 864e5;
 const loanPlan = payoff(loan.balance, loan.monthly, loan.rate);
-const rows = goals.map((g: any) => {
-  if (g.loan) return { name: g.name, kind: g.kind, status: 'progress', label: 'In progress', detail: `${money(loan.balance)} left · ${money(loan.monthly)}/mo`, p: 0.38, date: fmtMonth(loanPlan.end), loanMonths: loanPlan.months };
-  if (g.reached) return { name: g.name, kind: g.kind, status: 'done', label: 'Complete', detail: `${money(g.saved)} saved`, p: 1, date: `Reached ${fmtDate(new Date(g.reached))}` };
-  if (!g.monthly) return { name: g.name, kind: g.kind, status: 'idle', label: 'Not started', detail: `${money(g.target)} target`, p: 0, date: 'Add a saving rate to get a date' };
+const rows = goals.map((g: any, i: number) => {
+  const id = `goal-${i}`;
+  if (g.loan) return { id, name: g.name, kind: g.kind, type: 'loan', status: 'progress', label: 'In progress', detail: `${money(loan.balance)} left · ${money(loan.monthly)}/mo`, p: 0.38, date: `Paid off ${fmtMonth(loanPlan.end)}` };
+  if (g.reached) return { id, name: g.name, kind: g.kind, type: 'done', status: 'done', label: 'Complete', detail: `${money(g.saved)} saved`, p: 1, date: `Reached ${fmtDate(new Date(g.reached))}` };
+  if (!g.monthly) return { id, name: g.name, kind: g.kind, type: 'idle', status: 'idle', label: 'Not started', detail: `${money(g.target)} target`, p: 0, date: 'No date yet', target: g.target, saved: g.saved };
   const remaining = g.target - g.saved;
-  return { name: g.name, kind: g.kind, status: 'progress', label: 'In progress', detail: `${money(g.saved)} of ${money(g.target)} · ${money(g.monthly)}/mo`, p: g.saved / g.target, date: fmtDate(new Date(Date.now() + remaining / g.monthly * MONTH)), remaining, monthly: g.monthly };
+  return { id, name: g.name, kind: g.kind, type: 'savings', status: 'progress', label: 'In progress', detail: `${money(g.saved)} of ${money(g.target)} · ${money(g.monthly)}/mo`, p: g.saved / g.target, date: fmtDate(new Date(Date.now() + remaining / g.monthly * MONTH)), target: g.target, saved: g.saved, monthly: g.monthly };
 });
+const count = (st: string) => rows.filter(r => st === 'all' || r.status === st).length;
+const filters = [['all', 'All'], ['progress', 'In progress'], ['done', 'Complete'], ['idle', 'Not started']];
 ---
 <section class="section" id="goals" aria-labelledby="goals-title">
   <div class="wrap split">
@@ -29,40 +32,164 @@ const rows = goals.map((g: any) => {
 
     <div class="tray visual" role="group" aria-label="Goals in the app, with sample figures">
       <span class="sample-tag">Sample figures</span>
-      <article class="card list" aria-label="Goal list">
-        <div class="list-head"><span class="label">5 goals</span><span class="filters" aria-hidden="true"><span class="on">All</span><span>In progress</span><span>Complete</span></span></div>
+      <article class="card list" data-goal-list aria-label="Goal list">
+        <div class="list-head">
+          <span class="label">Tap a goal to try it</span>
+          <div class="filters" role="group" aria-label="Show goals">
+            {filters.map(([k, l], i) => <button type="button" data-filter={k} aria-pressed={i === 0 ? 'true' : 'false'}>{l} <span class="n" data-count={k}>{count(k)}</span></button>)}
+          </div>
+        </div>
         <ul>
           {rows.map(r => (
-            <li class="goal-row" data-goal-remaining={r.remaining} data-goal-monthly={r.monthly}>
-              <div class="g-top"><span class="g-name">{r.name}</span><span class={`chip ${r.status}`}>{r.label}</span></div>
-              <div class="g-bar" aria-hidden="true"><i class={r.status} style={`width:${(r.p * 100).toFixed(0)}%`}></i></div>
-              <div class="g-meta"><span>{r.kind} · {r.detail}</span>{r.loanMonths ? <b class="num">Paid off <span data-loan-months={r.loanMonths}>{r.date}</span></b> : <b class={`num ${r.status}`} data-date>{r.date}</b>}</div>
+            <li class="goal-row" data-row data-status={r.status} data-type={r.type} data-target={r.target} data-saved={r.saved} data-monthly={r.monthly}
+                data-balance={r.type === 'loan' ? loan.balance : undefined} data-pay={r.type === 'loan' ? loan.monthly : undefined} data-rate={r.type === 'loan' ? loan.rate : undefined}>
+              {r.type === 'done'
+                ? <div class="g-head static"><span class="g-top"><span class="g-name">{r.name}</span><span class={`chip ${r.status}`} data-chip>{r.label}</span></span><span class="g-bar" aria-hidden="true"><i class="done" style="width:100%"></i></span><span class="g-meta"><span>{r.kind} · {r.detail}</span><b class="num done">{r.date}</b></span></div>
+                : <button class="g-head" type="button" aria-expanded="false" aria-controls={`${r.id}-panel`}>
+                    <span class="g-top"><span class="g-name">{r.name}</span><span class={`chip ${r.status}`} data-chip>{r.label}</span></span>
+                    <span class="g-bar" aria-hidden="true"><i class={r.status} data-bar style={`width:${(r.p * 100).toFixed(0)}%`}></i></span>
+                    <span class="g-meta"><span data-detail>{r.kind} · {r.detail}</span><b class={`num ${r.status}`} data-date>{r.date}</b></span>
+                  </button>}
+              {r.type === 'savings' && (
+                <div class="g-panel" id={`${r.id}-panel`} hidden>
+                  <span class="p-label">Add to this goal</span>
+                  <div class="opts">{[10, 20, 50].map(v => <button type="button" class="opt" data-add={v}>+{v}</button>)}</div>
+                  <p class="p-note" data-note aria-live="polite"></p>
+                </div>)}
+              {r.type === 'loan' && (
+                <div class="g-panel" id={`${r.id}-panel`} hidden>
+                  <span class="p-label">Pay extra each month</span>
+                  <div class="opts">{[0, 50, 100].map(v => <button type="button" class="opt" data-extra={v} aria-pressed={v === 0 ? 'true' : 'false'}>{v ? `+${money(v)}` : 'Nothing extra'}</button>)}</div>
+                  <p class="p-note" data-note aria-live="polite"></p>
+                </div>)}
+              {r.type === 'idle' && (
+                <div class="g-panel" id={`${r.id}-panel`} hidden>
+                  <span class="p-label">Save each month</span>
+                  <div class="opts">{[500, 1000, 1500].map(v => <button type="button" class="opt" data-rate-pick={v} aria-pressed="false">{money(v)}</button>)}</div>
+                  <p class="p-note" data-note aria-live="polite"></p>
+                </div>)}
             </li>
           ))}
         </ul>
+        <p class="sr-only" aria-live="polite" data-filter-live></p>
       </article>
     </div>
   </div>
 </section>
 
+<script>
+  const MONTH = 30.4375 * 864e5, DAY = 864e5;
+  const money = (v: number) => 'NZ$' + Math.round(v).toLocaleString('en-NZ');
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const fmt = (d: Date) => d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' });
+  const fmtM = (d: Date) => d.toLocaleDateString('en-NZ', { month: 'short', year: 'numeric' });
+  const finish = (left: number, monthly: number) => new Date(+today + Math.max(0, left) / monthly * MONTH);
+  function payoff(balance: number, monthly: number, ratePct: number) {
+    const r = ratePct / 100 / 12; let b = balance, months = 0, interest = 0;
+    while (b > 0.005 && months < 600) { const i = b * r; interest += i; b = b + i - monthly; months++; }
+    return { months, interest, end: new Date(today.getFullYear(), today.getMonth() + months, 1) };
+  }
+  const flash = (el: HTMLElement) => { if (matchMedia('(prefers-reduced-motion: reduce)').matches || !el.animate) return; el.animate([{ opacity: 0.2, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.22,1,.36,1)' }); };
+
+  document.querySelectorAll<HTMLElement>('[data-goal-list]').forEach(list => {
+    const rows = [...list.querySelectorAll<HTMLElement>('[data-row]')];
+    let filter = 'all';
+    const counts = () => list.querySelectorAll<HTMLElement>('[data-count]').forEach(c => { const k = c.dataset.count!; c.textContent = String(rows.filter(r => k === 'all' || r.dataset.status === k).length); });
+    const applyFilter = () => rows.forEach(r => r.hidden = filter !== 'all' && r.dataset.status !== filter);
+
+    list.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach(b => b.addEventListener('click', () => {
+      filter = b.dataset.filter!;
+      list.querySelectorAll('[data-filter]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      applyFilter();
+      list.querySelector('[data-filter-live]')!.textContent = `Showing ${rows.filter(r => !r.hidden).length} goals`;
+    }));
+
+    rows.forEach(row => {
+      const head = row.querySelector<HTMLButtonElement>('button.g-head');
+      const panel = row.querySelector<HTMLElement>('.g-panel');
+      if (!head || !panel) return;
+      head.addEventListener('click', () => { const open = head.getAttribute('aria-expanded') !== 'true'; head.setAttribute('aria-expanded', String(open)); panel.hidden = !open; });
+      const $ = (s: string) => row.querySelector<HTMLElement>(s)!;
+      const date = $('[data-date]'), bar = $('[data-bar]'), note = $('[data-note]'), detail = $('[data-detail]');
+      const target = +row.dataset.target!, type = row.dataset.type;
+      let saved = +row.dataset.saved!, monthly = +row.dataset.monthly!;
+
+      // Paint today's dates (the HTML holds build-day dates).
+      if (type === 'savings') date.textContent = fmt(finish(target - saved, monthly));
+      if (type === 'loan') date.textContent = 'Paid off ' + fmtM(payoff(+row.dataset.balance!, +row.dataset.pay!, +row.dataset.rate!).end);
+
+      if (type === 'savings') panel.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(b => b.addEventListener('click', () => {
+        const add = +b.dataset.add!, before = finish(target - saved, monthly);
+        saved = Math.min(target, saved + add);
+        const after = finish(target - saved, monthly), days = Math.round((+before - +after) / DAY);
+        bar.style.width = (saved / target * 100).toFixed(1) + '%';
+        detail.textContent = `Savings · ${money(saved)} of ${money(target)} · ${money(monthly)}/mo`;
+        date.textContent = saved >= target ? 'Done' : fmt(after); flash(date);
+        note.textContent = saved >= target ? 'Goal reached' : `+${money(add)} · ${days <= 0 ? 'less than a day' : days === 1 ? '1 day' : days + ' days'} sooner`;
+      }));
+
+      if (type === 'loan') {
+        const bal = +row.dataset.balance!, pay = +row.dataset.pay!, rate = +row.dataset.rate!, base = payoff(bal, pay, rate);
+        panel.querySelectorAll<HTMLButtonElement>('[data-extra]').forEach(b => b.addEventListener('click', () => {
+          const extra = +b.dataset.extra!, p = payoff(bal, pay + extra, rate);
+          panel.querySelectorAll('[data-extra]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+          detail.textContent = `Loan payoff · ${money(bal)} left · ${money(pay + extra)}/mo`;
+          date.textContent = 'Paid off ' + fmtM(p.end); flash(date);
+          const sooner = base.months - p.months, less = Math.round((base.interest - p.interest) / 10) * 10;
+          note.textContent = extra ? `${sooner} ${sooner === 1 ? 'month' : 'months'} sooner, about ${money(less)} less interest` : '';
+        }));
+      }
+
+      if (type === 'idle') panel.querySelectorAll<HTMLButtonElement>('[data-rate-pick]').forEach(b => b.addEventListener('click', () => {
+        monthly = +b.dataset.ratePick!;
+        panel.querySelectorAll('[data-rate-pick]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        const d = finish(target - saved, monthly), m = Math.round((+d - +today) / MONTH);
+        row.dataset.status = 'progress';
+        const chip = $('[data-chip]'); chip.className = 'chip progress'; chip.textContent = 'In progress';
+        date.className = 'num progress'; date.textContent = fmt(d); flash(date);
+        detail.textContent = `Savings · ${money(saved)} of ${money(target)} · ${money(monthly)}/mo`;
+        note.textContent = `At ${money(monthly)} a month, you’d get there in ${Math.floor(m / 12)} years ${m % 12} months`;
+        counts(); applyFilter();
+      }));
+    });
+  });
+</script>
+
 <style>
   .visual { padding: 52px 28px 28px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
   .list { padding: 8px 0; }
-  .list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px 10px; }
-  .filters { display: flex; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
-  .filters span { padding: 4px 9px; border-radius: var(--r-pill); }
-  .filters .on { background: var(--bg); color: var(--text); }
+  .list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px 10px; flex-wrap: wrap; }
+  .filters { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .filters button { border: 0; background: transparent; font: 600 12.5px/1 var(--font-ui); color: var(--muted); padding: 0 10px; min-height: 32px; border-radius: var(--r-pill); cursor: pointer; white-space: nowrap; }
+  .filters button:hover { color: var(--text); }
+  .filters button[aria-pressed="true"] { background: var(--bg); color: var(--text); }
+  .filters .n { font-family: var(--font-num); color: var(--muted); margin-left: 2px; }
   .list ul { list-style: none; }
-  .goal-row { padding: 14px 20px; border-top: 1px solid var(--border); display: grid; gap: 8px; }
+  .goal-row { border-top: 1px solid var(--border); }
+  .g-head { all: unset; box-sizing: border-box; width: 100%; padding: 14px 20px; display: grid; gap: 8px; cursor: pointer; }
+  .g-head.static { cursor: default; }
+  button.g-head:hover { background: color-mix(in srgb, var(--bg) 60%, transparent); }
+  button.g-head:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: 4px; }
+  .g-panel { padding: 0 20px 16px; display: grid; gap: 10px; }
+  .p-label { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .opts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .opt { min-height: 40px; padding: 0 14px; border-radius: var(--r-md); border: 1px solid var(--border-strong); background: var(--card); color: var(--text); font: 700 13.5px/1 var(--font-num); cursor: pointer; transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast); }
+  .opt:hover { border-color: var(--text-2); }
+  .opt:active { transform: scale(.95); }
+  .opt[aria-pressed="true"] { background: var(--action); color: var(--on-action); border-color: var(--action); }
+  .p-note { font-size: 13px; font-weight: 600; color: var(--pos); min-height: 1.2em; }
+  .p-note:empty { display: none; }
   .g-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
   .g-name { font-weight: 600; font-size: 14.5px; letter-spacing: -0.01em; }
-  .g-bar { height: 5px; border-radius: var(--r-pill); background: var(--border); overflow: hidden; }
+  .g-bar { display: block; height: 5px; border-radius: var(--r-pill); background: var(--border); overflow: hidden; }
   .g-bar i { display: block; height: 100%; border-radius: inherit; }
+  .g-bar i { transition: width var(--dur-slow) var(--ease-out); }
   .g-bar .progress { background: var(--info-fill); }
   .g-bar .done { background: var(--pos-fill); }
   .g-meta { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
   .g-meta b { color: var(--text); font-weight: 600; font-size: 13px; }
   .g-meta b.done { color: var(--pos); }
   .g-meta b.idle { color: var(--muted); font-weight: 500; font-family: var(--font-ui); }
-  @media (max-width: 760px) { .visual { padding: 44px 12px 12px; border-radius: 24px; } .goal-row { padding: 13px 16px; } .list-head { padding: 10px 16px; } .filters { display: none; } }
+  .g-meta b.progress { color: var(--text); }
+  @media (max-width: 760px) { .visual { padding: 44px 12px 12px; border-radius: 24px; } .g-head { padding: 13px 16px; } .g-panel { padding: 0 16px 14px; } .list-head { padding: 10px 16px; } .filters { width: 100%; margin: 0 -6px; flex-wrap: wrap; overflow: visible; } }
 </style>

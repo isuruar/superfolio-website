@@ -86,7 +86,8 @@ const p = g.saved / g.target;
       $('[data-note-text]').textContent = saved >= TARGET ? `+${money(amount)} · Goal reached` : `+${money(amount)} · ${days <= 0 ? 'Less than a day' : days === 1 ? '1 day' : days + ' days'} sooner`;
       $('[data-undo]').hidden = false; $('[data-note]').classList.add('show');
     }
-    card.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(b => b.addEventListener('click', () => add(+b.dataset.add!)));
+    let touched = false;
+    card.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(b => b.addEventListener('click', () => { touched = true; add(+b.dataset.add!); }));
     $('[data-undo]').addEventListener('click', () => { if (undoTo === null) return; const prev = saved; saved = undoTo; undoTo = null; paint(prev, true); $('[data-note-text]').textContent = 'Contribution undone'; $('[data-undo]').hidden = true; });
 
     // Today's date may differ from build day, so repaint first. Then, once in view, one demonstration contribution.
@@ -102,7 +103,14 @@ const p = g.saved / g.target;
       played = true; io.disconnect();
       fill.style.transition = ''; bar.style.transition = '';
       requestAnimationFrame(() => { fill.style.strokeDashoffset = String(C * (1 - p0)); bar.style.width = (p0 * 100).toFixed(1) + '%'; });
-      setTimeout(() => { const b = $('[data-demo]'); b.classList.add('is-pressed'); setTimeout(() => { b.classList.remove('is-pressed'); add(50); }, 160); }, 1500);
+      const demo = (delay: number) => setTimeout(() => {
+        if (touched) return;
+        const b = $('[data-demo]'); b.classList.add('is-pressed');
+        setTimeout(() => { b.classList.remove('is-pressed'); if (!touched) add(50); }, 160);
+      }, delay);
+      // Let the net-worth total finish assembling first, so the two moments don't compete.
+      if (document.documentElement.dataset.heroAssembled === 'pending') document.addEventListener('sf:hero-assembled', () => demo(700), { once: true });
+      else demo(1500);
     }, { threshold: 0.6 }).observe(card);
   });
 </script>

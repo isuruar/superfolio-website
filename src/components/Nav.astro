@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
-const APP = 'https://superfoliomoney.vercel.app';
+import { APP, SIGN_IN } from '../lib/links';
 ---
 <header class="nav">
   <div class="wrap nav-row">
@@ -15,7 +15,7 @@ const APP = 'https://superfoliomoney.vercel.app';
       </ul>
     </nav>
     <div class="end">
-      <a class="signin" href={APP}>Sign in</a>
+      <a class="signin" href={SIGN_IN}>Sign in</a>
       <button class="theme" type="button" data-theme-toggle aria-label="Switch to dark mode">
         <Icon name="moon" size={18} class="i-moon" /><Icon name="sun" size={18} class="i-sun" />
       </button>

@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-const APP = 'https://superfoliomoney.vercel.app';
+import { SIGN_UP } from '../lib/links';
 const included = ['Net worth across 20 currencies', 'Goals with real dates', 'Spending plan and projection', 'Monthly check-ins', 'Sync across devices, works offline', 'Share a board with a partner', 'Backups you can download'];
 ---
 <section class="section" id="pricing" aria-labelledby="pricing-title">
@@ -15,7 +15,7 @@ const included = ['Net worth across 20 currencies', 'Goals with real dates', 'Sp
       <div class="amount num">NZ$0</div>
       <p class="per">No card details needed.</p>
       <ul>{included.map(i => <li><Icon name="tick" size={18} />{i}</li>)}</ul>
-      <a class="btn btn-primary btn-lg" href={APP}>Get started free <Icon name="arrow" size={16} /></a>
+      <a class="btn btn-primary btn-lg" href={SIGN_UP}>Get started free <Icon name="arrow" size={16} /></a>
     </div>
   </div>
 </section>

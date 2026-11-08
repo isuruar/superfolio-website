@@ -2,7 +2,7 @@
 import NetWorthCard from './NetWorthCard.astro';
 import GoalCard from './GoalCard.astro';
 import Icon from './Icon.astro';
-const APP = 'https://superfoliomoney.vercel.app';
+import { SIGN_UP } from '../lib/links';
 const facts = [
   { icon: 'globe',  title: '20 currencies',       body: 'Shown in NZ$, original kept' },
   { icon: 'lock',   title: 'No bank login',       body: 'You type the numbers in' },
@@ -17,7 +17,7 @@ const facts = [
     <h1 id="hero-title"><span class="line">All your money, in one place.</span> <span class="line quiet">And a real date for every goal.</span></h1>
     <p class="lede">Add what you own and owe in a few minutes. Superfolio adds it up across currencies and shows when you’ll reach the things you’re saving for. No spreadsheet, no finance jargon.</p>
     <div class="ctas">
-      <a class="btn btn-primary btn-lg" href={APP}>Get started free <Icon name="arrow" size={16} /></a>
+      <a class="btn btn-primary btn-lg" href={SIGN_UP}>Get started free <Icon name="arrow" size={16} /></a>
       <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
     </div>
     <p class="reassure">No ads. We never sell your data.</p>

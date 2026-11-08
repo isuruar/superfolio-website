@@ -1,12 +1,12 @@
 ---
 import Icon from './Icon.astro';
-const APP = 'https://superfoliomoney.vercel.app';
+import { SIGN_UP } from '../lib/links';
 ---
 <section class="section final" aria-labelledby="final-title">
   <div class="wrap">
     <div class="tray box">
       <h2 id="final-title">Start with one account. <span class="quiet">Add the rest when you’re ready.</span></h2>
-      <div class="ctas"><a class="btn btn-primary btn-lg" href={APP}>Get started free <Icon name="arrow" size={16} /></a></div>
+      <div class="ctas"><a class="btn btn-primary btn-lg" href={SIGN_UP}>Get started free <Icon name="arrow" size={16} /></a></div>
       <p class="reassure">Free while in beta. No bank login needed.</p>
     </div>
   </div>

@@ -171,6 +171,7 @@ const filters = [['all', 'All'], ['progress', 'In progress'], ['done', 'Complete
   button.g-head:hover { background: color-mix(in srgb, var(--bg) 60%, transparent); }
   button.g-head:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: 4px; }
   .g-panel { padding: 0 20px 16px; display: grid; gap: 10px; }
+  .g-panel[hidden] { display: none; }
   .p-label { font-size: 12px; font-weight: 600; color: var(--muted); }
   .opts { display: flex; gap: 8px; flex-wrap: wrap; }
   .opt { min-height: 40px; padding: 0 14px; border-radius: var(--r-md); border: 1px solid var(--border-strong); background: var(--card); color: var(--text); font: 700 13.5px/1 var(--font-num); cursor: pointer; transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast); }

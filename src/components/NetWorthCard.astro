@@ -35,7 +35,7 @@ const loanEnd = payoff(loan.balance, loan.monthly, loan.rate);
   </div>
   <ul class="rows">
     <li class="row" data-row-for="funds"><span class="ico" style="--c:var(--type-funds)"><Icon name="trend" size={16} /></span><div><div class="name">KiwiSaver Growth</div><div class="meta">Unit trusts</div></div><div class="val">NZ$38,650</div></li>
-    <li class="row" data-row-for="cash"><span class="ico" style="--c:var(--type-cash)"><Icon name="globe" size={16} /></span><div><div class="name">Savings in Colombo</div><div class="meta">Cash · live rate</div></div><div class="val">LKR 1,000,000<small data-fx>≈ NZ$5,500</small></div></li>
+    <li class="row" data-row-for="cash"><span class="ico" style="--c:var(--type-cash)"><Icon name="globe" size={16} /></span><div><div class="name">Savings in Singapore</div><div class="meta">Cash · live rate</div></div><div class="val">SGD 4,260<small data-fx>≈ NZ$5,500</small></div></li>
     <li class="row" data-row-for="other"><span class="ico" style="--c:var(--type-other)"><Icon name="car" size={16} /></span><div><div class="name">2019 hatchback</div><div class="meta">Revalues from age and kms</div></div><div class="val">NZ$14,300</div></li>
     <li class="row" data-row-for="loan"><span class="ico" style="--c:var(--muted)"><Icon name="card" size={16} /></span><div><div class="name">Car loan</div><div class="meta">Paid off <span data-loan-months={loanEnd.months}>{fmtMonth(loanEnd.end)}</span></div></div><div class="val">{money(-loan.balance)}</div></li>
   </ul>

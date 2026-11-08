@@ -6,7 +6,7 @@ export const BASE = 'NZD';
 export const assets = [
   { name: 'Everyday account',   type: 'cash',   value: 4820 },
   { name: 'Rainy-day savings',  type: 'cash',   value: 12400 },
-  { name: 'Savings in Colombo', type: 'cash',   value: 5500, original: { code: 'LKR', amount: 1_000_000 } },
+  { name: 'Savings in Singapore', type: 'cash', value: 5500, original: { code: 'SGD', amount: 4260 } },
   { name: 'KiwiSaver Growth',   type: 'funds',  value: 38650 },
   { name: 'Index fund',         type: 'funds',  value: 9210 },
   { name: 'ASX shares',         type: 'stocks', value: 6540, original: { code: 'AUD', amount: 6000 } },
@@ -43,7 +43,7 @@ export const history = [
 
 export const goals = [
   { name: 'Emergency fund',    kind: 'Savings',     saved: 12400, target: 15000, monthly: 250 },
-  { name: 'Trip to Sri Lanka', kind: 'Savings',     saved: 3920,  target: 6000,  monthly: 320 },
+  { name: 'Trip to Japan', kind: 'Savings',     saved: 3920,  target: 6000,  monthly: 320 },
   { name: 'Pay off car loan',  kind: 'Loan payoff', loan: true },
   { name: 'New laptop',        kind: 'Savings',     saved: 2000,  target: 2000,  monthly: 0, reached: '2026-10-03' },
   { name: 'House deposit',     kind: 'Savings',     saved: 0,     target: 80000, monthly: 0 },
@@ -62,7 +62,7 @@ export const freeToSpend = plan.takeHome - plan.fixed - plan.investments - plan.
 export const checkIn = [
   { name: 'KiwiSaver Growth',   value: 'NZ$38,650',     checked: '6 weeks ago' },
   { name: 'Index fund',         value: 'NZ$9,210',      checked: '5 weeks ago' },
-  { name: 'Savings in Colombo', value: 'LKR 1,000,000', checked: '5 weeks ago' },
+  { name: 'Savings in Singapore', value: 'SGD 4,260', checked: '5 weeks ago' },
 ];
 
 export const currencies = ['NZD', 'AUD', 'USD', 'GBP', 'EUR', 'SGD', 'CAD', 'CHF', 'HKD', 'JPY',

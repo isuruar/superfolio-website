@@ -10,10 +10,6 @@ const rows = goals.map((g: any) => {
   const remaining = g.target - g.saved;
   return { name: g.name, kind: g.kind, status: 'progress', label: 'In progress', detail: `${money(g.saved)} of ${money(g.target)} · ${money(g.monthly)}/mo`, p: g.saved / g.target, date: fmtDate(new Date(Date.now() + remaining / g.monthly * MONTH)), remaining, monthly: g.monthly };
 });
-const log = [
-  { month: 'November', total: 370, items: [{ day: '7 Nov', amt: 50, how: 'One tap' }, { day: '1 Nov', amt: 320, how: 'Auto-add' }] },
-  { month: 'October',  total: 340, items: [{ day: '14 Oct', amt: 20, how: 'One tap' }, { day: '1 Oct', amt: 320, how: 'Auto-add' }] },
-];
 ---
 <section class="section" id="goals" aria-labelledby="goals-title">
   <div class="wrap split">
@@ -45,23 +41,12 @@ const log = [
           ))}
         </ul>
       </article>
-      <article class="card history" aria-label="Contribution history for Trip to Sri Lanka">
-        <div class="h-title"><span class="label">Trip to Sri Lanka</span><span class="h-sub">History</span></div>
-        {log.map(m => (
-          <div class="h-month">
-            <div class="h-mhead"><span>{m.month}</span><b class="num">+{money(m.total)}</b></div>
-            <ul>{m.items.map(i => <li><span>{i.day}</span><span class="how">{i.how}</span><b class="num">+{money(i.amt)}</b></li>)}</ul>
-          </div>
-        ))}
-      </article>
     </div>
   </div>
 </section>
 
 <style>
   .visual { padding: 52px 28px 28px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .list { margin-right: 72px; }
-  .history { justify-self: end; width: 260px; margin-top: 12px; position: relative; box-shadow: var(--shadow-float); }
   .list { padding: 8px 0; }
   .list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 20px 10px; }
   .filters { display: flex; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
@@ -79,15 +64,5 @@ const log = [
   .g-meta b { color: var(--text); font-weight: 600; font-size: 13px; }
   .g-meta b.done { color: var(--pos); }
   .g-meta b.idle { color: var(--muted); font-weight: 500; font-family: var(--font-ui); }
-  .history { padding: 18px; display: grid; gap: 14px; }
-  .h-title { display: grid; gap: 2px; }
-  .h-sub { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
-  .h-month { display: grid; gap: 6px; }
-  .h-mhead { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
-  .h-mhead b { color: var(--pos); }
-  .h-month ul { list-style: none; display: grid; gap: 6px; }
-  .h-month li { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 6px; font-size: 12.5px; color: var(--muted); }
-  .h-month li b { color: var(--text); font-weight: 600; }
-  .how { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  @media (max-width: 760px) { .visual { padding: 44px 12px 12px; border-radius: 24px; } .goal-row { padding: 13px 16px; } .list-head { padding: 10px 16px; } .filters { display: none; } .list { margin-right: 0; } .history { width: auto; margin: 12px 0 0 32px; } }
+  @media (max-width: 760px) { .visual { padding: 44px 12px 12px; border-radius: 24px; } .goal-row { padding: 13px 16px; } .list-head { padding: 10px 16px; } .filters { display: none; } }
 </style>
